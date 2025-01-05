@@ -4,11 +4,13 @@ import { getMeAPI } from './api/getMeAPI';
 
 import { useDispatch, useSelector } from 'react-redux';
 import userReducer from './api/userSlice';
+import { itemAPI } from './api/itemAPI';
 
 export const store = configureStore({
   reducer: {
     [authAPI.reducerPath]: authAPI.reducer,
     [getMeAPI.reducerPath]: getMeAPI.reducer,
+    [itemAPI.reducerPath]: itemAPI.reducer,
     userState: userReducer
   },
   devTools: process.env.NODE_ENV === 'development',
@@ -16,6 +18,7 @@ export const store = configureStore({
     getDefaultMiddleware().concat([
         authAPI.middleware,
         getMeAPI.middleware,
+        itemAPI.middleware,
     ]),
 });
 

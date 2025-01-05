@@ -27,6 +27,11 @@ header {
   margin-bottom: 100px;
 }
 
+.main-view {
+  margin-top: 100px;
+  margin-bottom: 100px;
+}
+
 .logo-image {
   height: 45px;
   width: auto;
@@ -47,7 +52,7 @@ header {
 }
 
 .auth-wrapper .brand-logo {
-  margin: 1rem 0 2rem;
+  margin: 1rem 0 1rem;
   display: flex;
   justify-content: center;
   height: 80px;
@@ -189,4 +194,37 @@ a {
 .navbar-toggler:active,
 .navbar-toggler:focus {
   box-shadow: none;
+}
+
+.dropdown-menu {
+  animation-duration: 0.3s;
+  animation-fill-mode: both;
+  animation-name: slideIn;
+}
+
+@media (max-width: 768px) {
+  ul.navbar-nav li .dropdown-menu {
+    width: 100% !important;
+    margin-top: 6px !important;
+  }
+}
+
+.dropdown-item {
+  display: block;
+  width: 100%;
+  padding: 0.5rem 1.2rem;
+  clear: both;
+  font-weight: 400;
+  color: #6e6b7b;
+  text-align: inherit;
+  white-space: nowrap;
+  background-color: transparent;
+  border: 0;
+}
+
+.dropdown-item:active,
+.dropdown-item:hover {
+  color: #fff;
+  text-decoration: none;
+  background-color: #e09b08;
 }

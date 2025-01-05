@@ -66,12 +66,12 @@ const Header = () => {
                         href={
                             user
                                 ? user.role === 'Admin'
-                                    ? '/admin/moderation'
-                                    : user.role === 'Citizen'
-                                        ? '/citizen/issues'
-                                        : user.role === 'Authority'
-                                            ? '/authority/dashboard'
-                                            : '/'
+                                    ? '/admin/dashboard'
+                                    : user.role === 'Donor'
+                                        ? '/donor/dashboard'
+                                        : user.role === 'Needy'
+                                            ? '/needy/dashboard'
+                                            : '/volunteer/dashboard'
                                 : '/'
                         }
                     >
@@ -101,17 +101,75 @@ const Header = () => {
                         )}
                         {user && user.role === 'Donor' && (
                             <Nav className="ms-auto" navbar>
-                                
+                                <NavItem className="nav-item-responsive">
+                                    <NavLink onClick={() => { navigate('/donor/dashboard'); mobileToggle(); }}>
+                                        Dashboard
+                                    </NavLink>
+                                </NavItem>
+                                <NavItem className="nav-item-responsive">
+                                    <NavLink onClick={() => { navigate('/donor/donation-items'); mobileToggle(); }}>
+                                        Donation Items
+                                    </NavLink>
+                                </NavItem>
+                                <UncontrolledDropdown nav inNavbar>
+                                    <DropdownToggle nav caret>
+                                        <img src={userImg} alt="user" className="user-img" />
+                                    </DropdownToggle>
+                                    <DropdownMenu end>
+                                        <DropdownItem onClick={onLogoutHandler}>Log out</DropdownItem>
+                                    </DropdownMenu>
+                                </UncontrolledDropdown>
                             </Nav>
                         )}
                         {user && user.role === 'Needy' && (
                             <Nav className="ms-auto" navbar>
-                                
+                                <NavItem className="nav-item-responsive">
+                                    <NavLink onClick={() => { navigate('/needy/dashboard'); mobileToggle(); }}>
+                                        Dashboard
+                                    </NavLink>
+                                </NavItem>
+                                <UncontrolledDropdown nav inNavbar>
+                                    <DropdownToggle nav caret>
+                                        <img src={userImg} alt="user" className="user-img" />
+                                    </DropdownToggle>
+                                    <DropdownMenu end>
+                                        <DropdownItem onClick={onLogoutHandler}>Log out</DropdownItem>
+                                    </DropdownMenu>
+                                </UncontrolledDropdown>
                             </Nav>
                         )}
                         {user && user.role === 'Volunteer' && (
                             <Nav className="ms-auto" navbar>
-                                
+                                <NavItem className="nav-item-responsive">
+                                    <NavLink onClick={() => { navigate('/volunteer/dashboard'); mobileToggle(); }}>
+                                        Dashboard
+                                    </NavLink>
+                                </NavItem>
+                                <UncontrolledDropdown nav inNavbar>
+                                    <DropdownToggle nav caret>
+                                        <img src={userImg} alt="user" className="user-img" />
+                                    </DropdownToggle>
+                                    <DropdownMenu end>
+                                        <DropdownItem onClick={onLogoutHandler}>Log out</DropdownItem>
+                                    </DropdownMenu>
+                                </UncontrolledDropdown>
+                            </Nav>
+                        )}
+                        {user && user.role === 'Admin' && (
+                            <Nav className="ms-auto" navbar>
+                                <NavItem className="nav-item-responsive">
+                                    <NavLink onClick={() => { navigate('/admin/dashboard'); mobileToggle(); }}>
+                                        Dashboard
+                                    </NavLink>
+                                </NavItem>
+                                <UncontrolledDropdown nav inNavbar>
+                                    <DropdownToggle nav caret>
+                                        <img src={userImg} alt="user" className="user-img" />
+                                    </DropdownToggle>
+                                    <DropdownMenu end>
+                                        <DropdownItem onClick={onLogoutHandler}>Log out</DropdownItem>
+                                    </DropdownMenu>
+                                </UncontrolledDropdown>
                             </Nav>
                         )}
                     </Collapse>

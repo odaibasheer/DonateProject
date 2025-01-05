@@ -53,7 +53,7 @@ const VolunteerRegister = () => {
                         </div>
                         <div className="row">
                             <div className="col-12">
-                                <p className="body-meta">
+                                <div className="body-meta">
                                     Looking for care?{' '}
                                     <div>
                                         <Link to="/donor-register">
@@ -66,7 +66,7 @@ const VolunteerRegister = () => {
                                         </Link>
                                     </div>
 
-                                </p>
+                                </div>
                                 <h4 className="text-start">Volunteer, create a account</h4>
                                 <p className="body-2 md-vertical-spacing">
                                     Already have an account?{' '}
@@ -142,7 +142,7 @@ const VolunteerRegister = () => {
                             </div>
                             <div className="mt-4">
                                 <Button color="orange" className="btn btn-block w-100" type="submit">
-                                    SIGN UP
+                                    Register
                                 </Button>
                             </div>
                         </Form>

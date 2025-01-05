@@ -15,6 +15,11 @@ const PORT = process.env.PORT || 3005;
 // Connect Database
 connectDB();
 
+// Import routes
+const authRoute = require('./routes/auth');
+const itemsRoute = require('./routes/items');
+const usersRoute = require('./routes/users');
+
 // Init Middleware
 app.use(bodyParser.json({ limit: '50mb', extended: true }));
 app.use(express.static(path.join(__dirname, '/public')));
@@ -31,11 +36,15 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 
+
 app.get('/', (req, res) => {
     res.send('Donation System API Server is running!');
 });
 
 // Define Routes
+app.use('/api/auth', authRoute);
+app.use('/api/users', usersRoute);
+app.use('/api/items', itemsRoute);
 
 app.listen(PORT, () =>
     console.log(`Server started on port ${PORT}`)

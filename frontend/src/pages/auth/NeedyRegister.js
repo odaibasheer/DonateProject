@@ -36,7 +36,7 @@ const NeedyRegister = () => {
         }
         if (isObjEmpty(errors)) {
             data.address = addressObj;
-            data.role = 'company';
+            data.role = 'Needy';
             registerUser(data);
         }
     };
@@ -66,7 +66,7 @@ const NeedyRegister = () => {
                         </div>
                         <div className="row">
                             <div className="col-12">
-                                <p className="body-meta">
+                                <div className="body-meta">
                                     Looking for care?{' '}
                                     <div>
                                         <Link to="/donor-register">
@@ -79,7 +79,7 @@ const NeedyRegister = () => {
                                         </Link>
                                     </div>
 
-                                </p>
+                                </div>
                                 <h4 className="text-start">Needy, create a account</h4>
                                 <p className="body-2 md-vertical-spacing">
                                     Already have an account?{' '}
@@ -141,11 +141,18 @@ const NeedyRegister = () => {
                                             className={`form-control ${classnames({ 'is-invalid': errors.age })}`}
                                             type="number"
                                             id="age"
-                                            {...register('age', { required: true })}
+                                            {...register('age', {
+                                                required: 'Age is required.',
+                                                min: {
+                                                    value: 18,
+                                                    message: 'Age must be greater than 18'
+                                                }
+                                            })}
                                         />
-                                        {errors.age && <small className="text-danger">Age is required.</small>}
+                                        {errors.age && <small className="text-danger">{errors.age.message}</small>}
                                     </div>
                                 </Col>
+
                             </Row>
                             <div className='mb-2'>
                                 <Label>Socio-economic Status</Label>
@@ -169,7 +176,7 @@ const NeedyRegister = () => {
                             </div>
                             <div className="mt-4">
                                 <Button color="orange" className="btn btn-block w-100" type="submit">
-                                    SIGN UP
+                                    Register
                                 </Button>
                             </div>
                         </Form>

@@ -13,7 +13,9 @@ const authConfig = {
 
 router.post('/register', async (req, res) => {
     try {
-        const { fullname, email, password, role, address, age, socio_economic_status, skills, availability } = req.body;
+        const { username, email, password, role, address, age, socio_economic_status, skills, availability } = req.body;
+
+        console.log(req.body)
 
         // Check if the email already exists
         const emailExists = await User.findOne({ email });
@@ -27,7 +29,7 @@ router.post('/register', async (req, res) => {
 
         // Create a new user object
         const userData = {
-            fullname,
+            username,
             email,
             password: hashPassword,
             role,
@@ -40,7 +42,7 @@ router.post('/register', async (req, res) => {
                     message: 'Address, Age, and Socio-economic status are required for Needy users.',
                 });
             }
-            userData.address = address;
+            userData.address = address.formatted_address;
             userData.age = age;
             userData.socio_economic_status = socio_economic_status;
         } else if (role === 'Volunteer') {
@@ -143,7 +145,7 @@ router.post('/login', async (req, res) => {
 
         // Send response with user data and tokens
         return res.status(200).send({
-            user: userResponse,
+            userData: userResponse,
             accessToken,
             refreshToken,
             message: 'Login successful',
