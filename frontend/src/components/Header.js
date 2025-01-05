@@ -128,6 +128,11 @@ const Header = () => {
                                         Dashboard
                                     </NavLink>
                                 </NavItem>
+                                <NavItem className="nav-item-responsive">
+                                    <NavLink onClick={() => { navigate('/needy/assistance-items'); mobileToggle(); }}>
+                                        Assistance Items
+                                    </NavLink>
+                                </NavItem>
                                 <UncontrolledDropdown nav inNavbar>
                                     <DropdownToggle nav caret>
                                         <img src={userImg} alt="user" className="user-img" />

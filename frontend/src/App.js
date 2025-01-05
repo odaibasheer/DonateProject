@@ -18,6 +18,9 @@ import VolunteerDashboard from './pages/volunteer/VolunteerDashboard';
 import DonationItems from './pages/donor/DonationItems';
 import DonationItemCreate from './pages/donor/DonationItemCreate';
 import DonationItemUpdate from './pages/donor/DonationItemUpdate';
+import NeedyAssistanceItems from './pages/needy/NeedyAssistanceItems';
+import NeedyAssistanceItemCreate from './pages/needy/NeedyAssistanceItemCreate';
+import NeedyAssistanceItemUpdate from './pages/needy/NeedyAssistanceItemUpdate';
 
 const App = () => {
     const getHomeRoute = () => {
@@ -43,6 +46,9 @@ const App = () => {
                     </Route>
                     <Route element={<RequiredUser allowedRoles={['Needy']} />}>
                         <Route path="needy/dashboard" element={<NeedyDashboard />} />
+                        <Route path="needy/assistance-items" element={<NeedyAssistanceItems />} />
+                        <Route path="needy/assistance-items/item-create" element={<NeedyAssistanceItemCreate />} />
+                        <Route path="needy/assistance-items/item-update/:id" element={<NeedyAssistanceItemUpdate />} />
                     </Route>
                     <Route element={<RequiredUser allowedRoles={['Volunteer']} />}>
                         <Route path="volunteer/dashboard" element={<VolunteerDashboard />} />
