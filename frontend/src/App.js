@@ -14,7 +14,6 @@ import VolunteerRegister from './pages/auth/VolunteerRegister';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import DonorDashboard from './pages/donor/DonorDashboard';
 import NeedyDashboard from './pages/needy/NeedyDashboard';
-import VolunteerDashboard from './pages/volunteer/VolunteerDashboard';
 import DonationItems from './pages/donor/DonationItems';
 import DonationItemCreate from './pages/donor/DonationItemCreate';
 import DonationItemUpdate from './pages/donor/DonationItemUpdate';
@@ -25,6 +24,8 @@ import NeedyMyAssistanceItems from './pages/needy/NeedyMyAssistanceItems';
 import AdminUser from './pages/admin/AdminUser';
 import AdminUserUpdate from './pages/admin/AdminUserUpdate';
 import AdminUserCreate from './pages/admin/AdminUserCreate';
+import VolunteerProfile from './pages/volunteer/VolunteerProfile';
+import VolunteerTasks from './pages/volunteer/VolunteerTasks';
 
 const App = () => {
     const getHomeRoute = () => {
@@ -56,7 +57,8 @@ const App = () => {
                         <Route path="needy/my-assistance-items" element={<NeedyMyAssistanceItems />} />
                     </Route>
                     <Route element={<RequiredUser allowedRoles={['Volunteer']} />}>
-                        <Route path="volunteer/dashboard" element={<VolunteerDashboard />} />
+                        <Route path="volunteer/tasks" element={<VolunteerTasks />} />
+                        <Route path="volunteer/profile" element={<VolunteerProfile />} />
                     </Route>
                     <Route element={<RequiredUser allowedRoles={['Admin']} />}>
                         <Route path="admin/dashboard" element={<AdminDashboard />} />

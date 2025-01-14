@@ -21,6 +21,7 @@ const itemsRoute = require('./routes/items');
 const usersRoute = require('./routes/users');
 const assistancesRoute = require('./routes/assistances');
 const dashboardsRoute = require('./routes/dashboards');
+const tasksRoute = require('./routes/tasks');
 
 // Init Middleware
 app.use(bodyParser.json({ limit: '50mb', extended: true }));
@@ -49,6 +50,7 @@ app.use('/api/users', usersRoute);
 app.use('/api/items', itemsRoute);
 app.use('/api/assistances', assistancesRoute);
 app.use('/api/dashboards', dashboardsRoute);
+app.use('/api/tasks', tasksRoute);
 
 app.listen(PORT, () =>
     console.log(`Server started on port ${PORT}`)

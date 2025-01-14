@@ -37,7 +37,7 @@ export const getHomeRouteForLoggedInUser = (userRole) => {
     if (userRole === 'Admin') return '/admin/dashboard';
     if (userRole === 'Donor') return '/donor/dashboard';
     if (userRole === 'Needy') return '/needy/dashboard';
-    if (userRole === 'Volunteer') return '/volunteer/dashboard';
+    if (userRole === 'Volunteer') return '/volunteer/profile';
     return '/login';
 };
 

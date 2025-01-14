@@ -37,6 +37,25 @@ export const userAPI = createApi({
             transformResponse: (response) => response,
         }),
 
+        updateProfile: builder.mutation({
+            query(user) {
+                return {
+                    url: `/users/updateProfile`,
+                    method: 'PUT',
+                    credentials: 'include',
+                    body: user,
+                };
+            },
+            invalidatesTags: (result, _error, { id }) =>
+                result
+                    ? [
+                        { type: 'Users', id },
+                        { type: 'Users', id: 'LIST' },
+                    ]
+                    : [{ type: 'Users', id: 'LIST' }],
+            transformResponse: (response) => response,
+        }),
+
         getUser: builder.query({
             query(id) {
                 return {
@@ -92,4 +111,5 @@ export const {
     useGetUserQuery,
     useGetUsersQuery,
     useGetProfileQuery,
+    useUpdateProfileMutation,
 } = userAPI;

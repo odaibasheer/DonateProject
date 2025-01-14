@@ -71,7 +71,7 @@ const Header = () => {
                                         ? '/donor/dashboard'
                                         : user.role === 'Needy'
                                             ? '/needy/dashboard'
-                                            : '/volunteer/dashboard'
+                                            : '/volunteer/profile'
                                 : '/'
                         }
                     >
@@ -151,8 +151,13 @@ const Header = () => {
                         {user && user.role === 'Volunteer' && (
                             <Nav className="ms-auto" navbar>
                                 <NavItem className="nav-item-responsive">
-                                    <NavLink onClick={() => { navigate('/volunteer/dashboard'); mobileToggle(); }}>
-                                        Dashboard
+                                    <NavLink onClick={() => { navigate('/volunteer/tasks'); mobileToggle(); }}>
+                                        Tasks
+                                    </NavLink>
+                                </NavItem>
+                                <NavItem className="nav-item-responsive">
+                                    <NavLink onClick={() => { navigate('/volunteer/profile'); mobileToggle(); }}>
+                                        Profile
                                     </NavLink>
                                 </NavItem>
                                 <UncontrolledDropdown nav inNavbar>

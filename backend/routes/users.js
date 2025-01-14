@@ -2,7 +2,6 @@ const mongoose = require('mongoose');
 const User = require('../models/User');
 const express = require('express');
 const verifyToken = require('../utils/verifyToken');
-const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const router = express.Router();
 
@@ -231,6 +230,63 @@ router.post('/create', verifyToken(['Admin']), async (req, res) => {
 router.delete('/delete/:id', verifyToken(['Admin']), async (req, res) => {
     await User.deleteOne({ _id: req.params.id });
     return res.send({ message: 'User successfully deleted!' });
+});
+
+router.get('/getProfile', verifyToken(['Admin', 'Volunteer']), async (req, res) => {
+    const userId = req.user._id;
+
+    // Validate ObjectId
+    if (!mongoose.isValidObjectId(userId)) {
+        return res.status(400).json({ message: 'Malformed user ID' });
+    }
+
+    try {
+        // Find user and exclude "__v" field
+        const user = await User.findById(userId).select('-__v');
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        return res.status(200).json(user);
+    } catch (error) {
+        console.error('Error fetching user:', error);
+        return res.status(500).json({ message: 'Internal Server Error' });
+    }
+});
+
+router.put('/updateProfile', verifyToken(['Admin', 'Volunteer']), async (req, res) => {
+    const userId = req.body.profileId;
+    const updateValues = req.body;
+
+    // Validate ObjectId
+    if (!mongoose.isValidObjectId(userId)) {
+        return res.status(400).json({ message: 'Malformed user ID' });
+    }
+
+    try {
+        // Update user and return the new document
+        const updatedUser = await User.findByIdAndUpdate(
+            userId,
+            updateValues,
+            { new: true, runValidators: true } // Return the updated document and validate input
+        ).select('-__v');
+
+        if (!updatedUser) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        return res.status(200).json({
+            updatedUser,
+            message: 'Profile successfully updated',
+        });
+    } catch (error) {
+        // Handle duplicate key error (e.g., unique email)
+        if (error.code === 11000) {
+            return res.status(400).json({ message: 'Duplicated email. Email already exists.' });
+        }
+        console.error('Error updating user:', error);
+        return res.status(500).json({ message: 'Internal Server Error' });
+    }
 });
 
 module.exports = router;

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react';
 import {
     Button,
@@ -18,7 +19,7 @@ import DataTable from 'react-data-table-component';
 import { toast } from 'react-toastify';
 import Select from 'react-select';
 import { useDeleteUserMutation, useGetUsersQuery } from '../../redux/api/userAPI';
-import { Edit, ChevronDown, MoreVertical, Slash, Trash2 } from 'react-feather';
+import { Edit, ChevronDown, MoreVertical, Trash2 } from 'react-feather';
 import { useNavigate } from 'react-router-dom';
 import FullScreenLoader from '../../components/FullScreenLoader';
 

@@ -239,7 +239,7 @@ const AdminUserCreate = () => {
                                     </>
                                 )}
 
-                                <div className="mt-4">
+                                <div className="my-3">
                                     <Button
                                         color="primary"
                                         className="btn-block"
