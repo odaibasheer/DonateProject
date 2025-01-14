@@ -11,6 +11,7 @@ const userSchema = new mongoose.Schema(
             default: 'Volunteer',
             required: true,
         },
+        phone: { type: String, required: true },
         // Fields specific to Needy
         address: { type: String, required: function () { return this.role === 'Needy'; } },
         age: { type: Number, required: function () { return this.role === 'Needy'; } },

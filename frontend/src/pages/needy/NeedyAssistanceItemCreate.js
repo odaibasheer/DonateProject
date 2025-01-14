@@ -13,7 +13,6 @@ const NeedyAssistanceItemCreate = () => {
         register,
         handleSubmit,
         formState: { errors },
-        setValue,
     } = useForm();
 
     const [createAssistance, { isLoading, isError, error, isSuccess, data }] = useCreateAssistanceMutation();

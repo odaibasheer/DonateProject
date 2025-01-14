@@ -4,7 +4,7 @@ import { Button, Card, CardBody, Col, Form, FormGroup, Label, Row } from "reacts
 import classnames from "classnames";
 import { useGetAssistanceQuery, useUpdateAssistanceMutation } from "../../redux/api/assistanceAPI"; // Adjusted import for assistance API
 import { toast } from "react-toastify";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import FullScreenLoader from "../../components/FullScreenLoader";
 

@@ -3,7 +3,6 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const User = require('../models/User');
 
-const saltLength = 10;
 let refreshTokens = [];
 
 const authConfig = {
@@ -13,9 +12,7 @@ const authConfig = {
 
 router.post('/register', async (req, res) => {
     try {
-        const { username, email, password, role, address, age, socio_economic_status, skills, availability } = req.body;
-
-        console.log(req.body)
+        const { username, email, password, phone, role, address, age, socio_economic_status, skills, availability } = req.body;
 
         // Check if the email already exists
         const emailExists = await User.findOne({ email });
@@ -33,6 +30,7 @@ router.post('/register', async (req, res) => {
             email,
             password: hashPassword,
             role,
+            phone,
         };
 
         // Add role-specific fields
@@ -220,7 +218,7 @@ router.post('/admin/login', async (req, res) => {
 
         // Return the response with user data and access token
         return res.status(200).send({
-            user: userResponse,
+            userData: userResponse,
             accessToken,
             refreshToken,
             message: 'Admin login successful',

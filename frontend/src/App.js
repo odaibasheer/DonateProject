@@ -21,6 +21,10 @@ import DonationItemUpdate from './pages/donor/DonationItemUpdate';
 import NeedyAssistanceItems from './pages/needy/NeedyAssistanceItems';
 import NeedyAssistanceItemCreate from './pages/needy/NeedyAssistanceItemCreate';
 import NeedyAssistanceItemUpdate from './pages/needy/NeedyAssistanceItemUpdate';
+import NeedyMyAssistanceItems from './pages/needy/NeedyMyAssistanceItems';
+import AdminUser from './pages/admin/AdminUser';
+import AdminUserUpdate from './pages/admin/AdminUserUpdate';
+import AdminUserCreate from './pages/admin/AdminUserCreate';
 
 const App = () => {
     const getHomeRoute = () => {
@@ -49,12 +53,16 @@ const App = () => {
                         <Route path="needy/assistance-items" element={<NeedyAssistanceItems />} />
                         <Route path="needy/assistance-items/item-create" element={<NeedyAssistanceItemCreate />} />
                         <Route path="needy/assistance-items/item-update/:id" element={<NeedyAssistanceItemUpdate />} />
+                        <Route path="needy/my-assistance-items" element={<NeedyMyAssistanceItems />} />
                     </Route>
                     <Route element={<RequiredUser allowedRoles={['Volunteer']} />}>
                         <Route path="volunteer/dashboard" element={<VolunteerDashboard />} />
                     </Route>
                     <Route element={<RequiredUser allowedRoles={['Admin']} />}>
                         <Route path="admin/dashboard" element={<AdminDashboard />} />
+                        <Route path="admin/users" element={<AdminUser />} />
+                        <Route path="admin/users/create-user" element={<AdminUserCreate />} />
+                        <Route path="admin/users/update-user/:id" element={<AdminUserUpdate />} />
                     </Route>
                     <Route path="admin/login" element={<AdminLogin />} />
                     <Route path="login" element={<Login />} />

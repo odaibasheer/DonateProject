@@ -115,6 +115,19 @@ const NeedyRegister = () => {
                                         {errors.email && <small className="text-danger">Email is required.</small>}
                                     </div>
                                 </Col>
+                                <Col md="6">
+                                    <div className="mb-2">
+                                        <Label>Phone</Label>
+                                        <input
+                                            className={`form-control ${classnames({ 'is-invalid': errors.phone })}`}
+                                            type="text"
+                                            {...register('phone', { required: true })}
+                                        />
+                                        {errors.phone && (
+                                            <small className="text-danger">Phone is required.</small>
+                                        )}
+                                    </div>
+                                </Col>
                                 <Col md={6}>
                                     <div className='mb-2'>
                                         <Label>Address</Label>

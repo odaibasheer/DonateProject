@@ -6,6 +6,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import userReducer from './api/userSlice';
 import { itemAPI } from './api/itemAPI';
 import { assistanceAPI } from './api/assistanceAPI';
+import { dashboardAPI } from './api/dashboardAPI';
+import { userAPI } from './api/userAPI';
 
 export const store = configureStore({
   reducer: {
@@ -13,6 +15,8 @@ export const store = configureStore({
     [getMeAPI.reducerPath]: getMeAPI.reducer,
     [itemAPI.reducerPath]: itemAPI.reducer,
     [assistanceAPI.reducerPath]: assistanceAPI.reducer,
+    [dashboardAPI.reducerPath]: dashboardAPI.reducer,
+    [userAPI.reducerPath]: userAPI.reducer,
     userState: userReducer
   },
   devTools: process.env.NODE_ENV === 'development',
@@ -22,6 +26,8 @@ export const store = configureStore({
         getMeAPI.middleware,
         itemAPI.middleware,
         assistanceAPI.middleware,
+        dashboardAPI.middleware,
+        userAPI.middleware,
     ]),
 });
 

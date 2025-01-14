@@ -3,11 +3,7 @@ import {
     Card,
     Col,
     Row,
-    UncontrolledDropdown,
     Badge,
-    DropdownToggle,
-    DropdownMenu,
-    DropdownItem,
     Modal,
     ModalHeader,
     ModalBody,
@@ -16,22 +12,18 @@ import {
 } from "reactstrap";
 import DataTable from "react-data-table-component";
 import { toast } from "react-toastify";
-import { Archive, ChevronDown, FileText, MoreVertical, Trash2 } from "react-feather";
-import { useNavigate } from "react-router-dom";
+import { ChevronDown, FileText } from "react-feather";
 import { useEffect, useState } from "react";
 import {
     useDeleteAssistanceMutation,
     useGetAssistancesQuery,
 } from "../../redux/api/assistanceAPI";
-import { getUserData } from "../../utils/Utils";
 
-const NeedyAssistanceItems = () => {
-    const navigate = useNavigate();
+const NeedyMyAssistanceItems = () => {
     const [deleteAssistance] = useDeleteAssistanceMutation();
     const { data: assistanceItems, refetch, isLoading } = useGetAssistancesQuery();
     const [selectedId, setSelectedId] = useState(null);
     const [modalDeleteVisibility, setModalDeleteVisibility] = useState(false);
-    const userData = getUserData();
 
     useEffect(() => {
         refetch();
@@ -50,7 +42,7 @@ const NeedyAssistanceItems = () => {
                 </Badge>
             );
         }
-
+    
         return (
             <a href={file} target="_blank" rel="noopener noreferrer" className="text-primary d-flex align-items-center">
                 <FileText size={16} className="me-1" />
@@ -97,41 +89,6 @@ const NeedyAssistanceItems = () => {
             cell: (row) => renderBadge(row.status),
             sortable: true,
         },
-        {
-            name: "Created By",
-            selector: (row) => row.createdBy?.username,
-            sortable: true,
-        },
-        {
-            name: "Actions",
-            width: "150px",
-            cell: (row) => (
-                <>
-                {row.createdBy._id === userData._id}
-                    <UncontrolledDropdown>
-                        <DropdownToggle tag="div" className="btn btn-sm">
-                            <MoreVertical size={14} className="cursor-pointer action-btn" />
-                        </DropdownToggle>
-                        <DropdownMenu end container="body">
-                            <DropdownItem
-                                className="w-100"
-                                onClick={() =>
-                                    navigate(`/needy/assistance-items/item-update/${row._id}`)
-                                }
-                            >
-                                <Archive size={14} className="mx-1" />
-                                <span className="align-middle mx-2">Edit</span>
-                            </DropdownItem>
-                            <DropdownItem onClick={() => toggleDeleteModal(row._id)}>
-                                <Trash2 size={14} className="mx-1" />
-                                <span className="align-middle mx-2">Delete</span>
-                            </DropdownItem>
-                        </DropdownMenu>
-                    </UncontrolledDropdown>
-                </>
-
-            ),
-        },
     ];
 
     const handleDeleteAssistance = async () => {
@@ -154,13 +111,7 @@ const NeedyAssistanceItems = () => {
         <div className="container main-view">
             <Row className="my-3">
                 <Col>
-                    <h3 className="mb-3">Assistance Requests</h3>
-                    <a
-                        href="/needy/assistance-items/item-create"
-                        className="btn btn-orange"
-                    >
-                        Create Assistance
-                    </a>
+                    <h3 className="mb-3">My Assistances</h3>
                 </Col>
             </Row>
             <Row>
@@ -209,4 +160,4 @@ const NeedyAssistanceItems = () => {
     );
 };
 
-export default NeedyAssistanceItems;
+export default NeedyMyAssistanceItems;

@@ -130,7 +130,12 @@ const Header = () => {
                                 </NavItem>
                                 <NavItem className="nav-item-responsive">
                                     <NavLink onClick={() => { navigate('/needy/assistance-items'); mobileToggle(); }}>
-                                        Assistance Items
+                                        Requests
+                                    </NavLink>
+                                </NavItem>
+                                <NavItem className="nav-item-responsive">
+                                    <NavLink onClick={() => { navigate('/needy/my-assistance-items'); mobileToggle(); }}>
+                                        My Items
                                     </NavLink>
                                 </NavItem>
                                 <UncontrolledDropdown nav inNavbar>
@@ -165,6 +170,11 @@ const Header = () => {
                                 <NavItem className="nav-item-responsive">
                                     <NavLink onClick={() => { navigate('/admin/dashboard'); mobileToggle(); }}>
                                         Dashboard
+                                    </NavLink>
+                                </NavItem>
+                                <NavItem className="nav-item-responsive">
+                                    <NavLink onClick={() => { navigate('/admin/users'); mobileToggle(); }}>
+                                        Users
                                     </NavLink>
                                 </NavItem>
                                 <UncontrolledDropdown nav inNavbar>
