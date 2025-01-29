@@ -238,18 +238,17 @@ const AdminUserCreate = () => {
                                         </Col>
                                     </>
                                 )}
-
-                                <div className="my-3">
-                                    <Button
-                                        color="primary"
-                                        className="btn-block"
-                                        type="submit"
-                                        disabled={isLoading}
-                                    >
-                                        {isLoading ? "Saving..." : "Create"}
-                                    </Button>
-                                </div>
                             </Row>
+                            <div className="my-3">
+                                <Button
+                                    color="primary"
+                                    className="btn-block"
+                                    type="submit"
+                                    disabled={isLoading}
+                                >
+                                    {isLoading ? "Saving..." : "Create"}
+                                </Button>
+                            </div>
                         </Form>
                     </CardBody>
                 </Card>

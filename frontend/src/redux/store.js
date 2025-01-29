@@ -9,6 +9,7 @@ import { assistanceAPI } from './api/assistanceAPI';
 import { dashboardAPI } from './api/dashboardAPI';
 import { userAPI } from './api/userAPI';
 import { inventoryAPI } from './api/inventoryAPI';
+import { taskAPI } from './api/taskAPI';
 
 export const store = configureStore({
   reducer: {
@@ -19,6 +20,7 @@ export const store = configureStore({
     [dashboardAPI.reducerPath]: dashboardAPI.reducer,
     [inventoryAPI.reducerPath]: inventoryAPI.reducer,
     [userAPI.reducerPath]: userAPI.reducer,
+    [taskAPI.reducerPath]: taskAPI.reducer,
     userState: userReducer
   },
   devTools: process.env.NODE_ENV === 'development',
@@ -31,6 +33,7 @@ export const store = configureStore({
         dashboardAPI.middleware,
         inventoryAPI.middleware,
         userAPI.middleware,
+        taskAPI.middleware,
     ]),
 });
 

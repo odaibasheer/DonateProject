@@ -27,6 +27,9 @@ import AdminUserCreate from './pages/admin/AdminUserCreate';
 import VolunteerProfile from './pages/volunteer/VolunteerProfile';
 import VolunteerTasks from './pages/volunteer/VolunteerTasks';
 import AdminInventory from './pages/admin/AdminInventory';
+import AdminShipping from './pages/admin/AdminShipping';
+import AdminShippingCreate from './pages/admin/AdminShippingCreate';
+import AdminShippingUpdate from './pages/admin/AdminShippingUpdate';
 
 const App = () => {
     const getHomeRoute = () => {
@@ -64,6 +67,9 @@ const App = () => {
                     <Route element={<RequiredUser allowedRoles={['Admin']} />}>
                         <Route path="admin/dashboard" element={<AdminDashboard />} />
                         <Route path="admin/users" element={<AdminUser />} />
+                        <Route path="admin/shipping" element={<AdminShipping />} />
+                        <Route path="admin/shipping/track-shipping" element={<AdminShippingCreate />} />
+                        <Route path="admin/shipping/update-shipping/:id" element={<AdminShippingUpdate />} />
                         <Route path="admin/users/create-user" element={<AdminUserCreate />} />
                         <Route path="admin/users/update-user/:id" element={<AdminUserUpdate />} />
                         <Route path="admin/inventory" element={<AdminInventory />} />
