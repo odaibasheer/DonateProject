@@ -57,8 +57,8 @@ const DonationItems = () => {
             sortable: true,
         },
         {
-            name: "Amount",
-            selector: (row) => row.amount,
+            name: "Quantity",
+            selector: (row) => row.quantity,
             sortable: true,
         },
         {

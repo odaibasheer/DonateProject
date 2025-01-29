@@ -26,6 +26,7 @@ import AdminUserUpdate from './pages/admin/AdminUserUpdate';
 import AdminUserCreate from './pages/admin/AdminUserCreate';
 import VolunteerProfile from './pages/volunteer/VolunteerProfile';
 import VolunteerTasks from './pages/volunteer/VolunteerTasks';
+import AdminInventory from './pages/admin/AdminInventory';
 
 const App = () => {
     const getHomeRoute = () => {
@@ -65,6 +66,7 @@ const App = () => {
                         <Route path="admin/users" element={<AdminUser />} />
                         <Route path="admin/users/create-user" element={<AdminUserCreate />} />
                         <Route path="admin/users/update-user/:id" element={<AdminUserUpdate />} />
+                        <Route path="admin/inventory" element={<AdminInventory />} />
                     </Route>
                     <Route path="admin/login" element={<AdminLogin />} />
                     <Route path="login" element={<Login />} />

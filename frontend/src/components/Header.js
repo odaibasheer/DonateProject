@@ -178,6 +178,11 @@ const Header = () => {
                                     </NavLink>
                                 </NavItem>
                                 <NavItem className="nav-item-responsive">
+                                    <NavLink onClick={() => { navigate('/admin/inventory'); mobileToggle(); }}>
+                                        Inventory
+                                    </NavLink>
+                                </NavItem>
+                                <NavItem className="nav-item-responsive">
                                     <NavLink onClick={() => { navigate('/admin/users'); mobileToggle(); }}>
                                         Users
                                     </NavLink>

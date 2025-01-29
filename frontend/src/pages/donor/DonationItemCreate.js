@@ -21,7 +21,7 @@ const DonationItemCreate = () => {
         try {
             const form = new FormData();
             form.append("type", data.type);
-            form.append("amount", data.amount);
+            form.append("quantity", data.quantity);
             form.append("description", data.description);
             form.append("purpose", data.purpose);
             if (data.image && data.image[0]) {
@@ -78,7 +78,7 @@ const DonationItemCreate = () => {
                                         <option value="Money">Money</option>
                                         <option value="Clothes">Clothes</option>
                                         <option value="Medical Supplies">Medical Supplies</option>
-                                        <option value="Medical Supplies">Money</option>
+                                        <option value="Food">Food</option>
                                         <option value="Furniture">Furniture</option>
                                         <option value="Other">Other</option>
                                     </select>
@@ -90,17 +90,17 @@ const DonationItemCreate = () => {
                             </Col>
                             <Col md={6}>
                                 <FormGroup>
-                                    <Label for="amount">Amount</Label>
+                                    <Label for="quantity">Quantity</Label>
                                     <input
                                         className={`form-control ${classnames({
-                                            "is-invalid": errors.amount,
+                                            "is-invalid": errors.quantity,
                                         })}`}
-                                        id="amount"
+                                        id="quantity"
                                         type="number"
-                                        {...register("amount", { required: "Amount is required." })}
+                                        {...register("quantity", { required: "quantity is required." })}
                                     />
-                                    {errors.amount && (
-                                        <small className="text-danger">{errors.amount.message}</small>
+                                    {errors.quantity && (
+                                        <small className="text-danger">{errors.quantity.message}</small>
                                     )}
                                 </FormGroup>
                             </Col>
@@ -150,7 +150,7 @@ const DonationItemCreate = () => {
                         <Row>
                             <Col>
                                 <FormGroup>
-                                    <Label for="purpose">Description</Label>
+                                    <Label for="purpose">Purpose</Label>
                                     <textarea
                                         id="purpose"
                                         className={`form-control ${classnames({ 'is-invalid': errors.purpose })}`}

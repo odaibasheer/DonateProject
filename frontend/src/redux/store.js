@@ -8,6 +8,7 @@ import { itemAPI } from './api/itemAPI';
 import { assistanceAPI } from './api/assistanceAPI';
 import { dashboardAPI } from './api/dashboardAPI';
 import { userAPI } from './api/userAPI';
+import { inventoryAPI } from './api/inventoryAPI';
 
 export const store = configureStore({
   reducer: {
@@ -16,6 +17,7 @@ export const store = configureStore({
     [itemAPI.reducerPath]: itemAPI.reducer,
     [assistanceAPI.reducerPath]: assistanceAPI.reducer,
     [dashboardAPI.reducerPath]: dashboardAPI.reducer,
+    [inventoryAPI.reducerPath]: inventoryAPI.reducer,
     [userAPI.reducerPath]: userAPI.reducer,
     userState: userReducer
   },
@@ -27,6 +29,7 @@ export const store = configureStore({
         itemAPI.middleware,
         assistanceAPI.middleware,
         dashboardAPI.middleware,
+        inventoryAPI.middleware,
         userAPI.middleware,
     ]),
 });

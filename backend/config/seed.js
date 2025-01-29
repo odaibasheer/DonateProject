@@ -22,6 +22,7 @@ const seedAdmin = async () => {
             email: 'admin@example.com',
             password: 'admin123',
             role: 'Admin',
+            phone: '97236987654'
         };
 
         // Hash the password

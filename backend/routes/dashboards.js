@@ -1,10 +1,10 @@
 const express = require('express');
-const mongoose = require('mongoose');
 const Assistance = require('../models/Assistance');
+const verifyToken = require('../utils/verifyToken');
 const router = express.Router();
 
 // Endpoint to get assistance statistics
-router.get('/needy', async (req, res) => {
+router.get('/needy', verifyToken(['Needy']), async (req, res) => {
     try {
         // Get counts for statuses
         const pendingCount = await Assistance.countDocuments({ status: 'Pending' });

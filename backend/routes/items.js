@@ -75,7 +75,7 @@ router.get('/my-items', verifyToken(['Admin', 'Donor']), async (req, res) => {
 // **POST /donations** - Submit a new donation
 router.post('/create', verifyToken(['Admin', 'Donor']), upload.single('image'), async (req, res) => {
     try {
-        const { type, amount, description, purpose } = req.body;
+        const { type, quantity, description, purpose } = req.body;
         const createdBy = req.user._id;  // Assuming the user is attached to the req object
         let image = null;
 
@@ -86,7 +86,7 @@ router.post('/create', verifyToken(['Admin', 'Donor']), upload.single('image'), 
 
         const newItem = new Item({
             type,
-            amount,
+            quantity,
             description,
             createdBy,
             image,
@@ -103,13 +103,13 @@ router.post('/create', verifyToken(['Admin', 'Donor']), upload.single('image'), 
 // **PUT /donations/:id** - Update an existing donation
 router.put('/update/:id', verifyToken(['Admin', 'Donor']), upload.single('image'), async (req, res) => {
     try {
-        const { type, amount, description, purpose } = req.body;
-        console.log(req.body)
+        const { type, quantity, description, purpose } = req.body;
+
         const { id } = req.params;
 
         const updatedData = {};
         if (type) updatedData.type = type;
-        if (amount) updatedData.amount = amount;
+        if (quantity) updatedData.quantity = quantity;
         if (description) updatedData.description = description;
         if (purpose) updatedData.purpose = purpose;
 
