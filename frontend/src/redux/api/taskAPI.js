@@ -64,6 +64,13 @@ export const taskAPI = createApi({
                     : [{ type: 'Tasks', id: 'LIST' }],
         }),
 
+        getTaskAssistances: builder.query({
+            query: () => ({
+                url: '/tasks/getAssistances',
+                credentials: 'include',
+            }),
+        }),
+
         // Delete Task
         deleteTask: builder.mutation({
             query(id) {
@@ -84,4 +91,5 @@ export const {
     useGetTaskQuery,
     useGetTasksQuery,
     useDeleteTaskMutation,
+    useGetTaskAssistancesQuery,
 } = taskAPI;

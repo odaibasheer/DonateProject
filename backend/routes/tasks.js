@@ -1,6 +1,7 @@
 const express = require('express');
 const Task = require('../models/Task');
 const verifyToken = require('../utils/verifyToken');
+const Assistance = require('../models/Assistance');
 const router = express.Router();
 
 // Get all tasks with authorization
@@ -140,6 +141,20 @@ router.delete('/delete/:id', verifyToken(['Admin']), async (req, res) => {
             status: "error",
             message: error.message,
         });
+    }
+});
+
+router.get("/getAssistances", verifyToken(["Admin", "Donor", "Needy", "Volunteer"]), async (req, res) => {
+    try {
+        const assistances = await Assistance.find({ status: "Approved" })
+            .select("-__v")
+            .populate({
+                path: "createdBy",
+                select: "username email role",
+            });
+        return res.status(200).send(assistances);
+    } catch (error) {
+        return res.status(500).send({ status: "error", message: error.message });
     }
 });
 

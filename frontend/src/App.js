@@ -30,6 +30,7 @@ import AdminInventory from './pages/admin/AdminInventory';
 import AdminShipping from './pages/admin/AdminShipping';
 import AdminShippingCreate from './pages/admin/AdminShippingCreate';
 import AdminShippingUpdate from './pages/admin/AdminShippingUpdate';
+import AdminSchedule from './pages/admin/AdminSchedule';
 
 const App = () => {
     const getHomeRoute = () => {
@@ -73,6 +74,7 @@ const App = () => {
                         <Route path="admin/users/create-user" element={<AdminUserCreate />} />
                         <Route path="admin/users/update-user/:id" element={<AdminUserUpdate />} />
                         <Route path="admin/inventory" element={<AdminInventory />} />
+                        <Route path="admin/schedule" element={<AdminSchedule />} />
                     </Route>
                     <Route path="admin/login" element={<AdminLogin />} />
                     <Route path="login" element={<Login />} />

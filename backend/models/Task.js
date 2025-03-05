@@ -7,6 +7,7 @@ const taskSchema = new mongoose.Schema(
         assign: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
         status: { type: String, enum: ['Pending', 'In Transit', 'Delivered'], default: 'Pending' },
         urgency: { type: String, enum: ['Low', 'Medium', 'High'], default: 'Low' },
+        assistance: { type: mongoose.Schema.Types.ObjectId, ref: 'Assistance', required: true },
     },
     { timestamps: true }
 );

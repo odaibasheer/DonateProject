@@ -192,6 +192,11 @@ const Header = () => {
                                         Users
                                     </NavLink>
                                 </NavItem>
+                                <NavItem className="nav-item-responsive">
+                                    <NavLink onClick={() => { navigate('/admin/schedule'); mobileToggle(); }}>
+                                        Schedule
+                                    </NavLink>
+                                </NavItem>
                                 <UncontrolledDropdown nav inNavbar>
                                     <DropdownToggle nav caret>
                                         <img src={userImg} alt="user" className="user-img" />

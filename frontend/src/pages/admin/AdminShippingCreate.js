@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { Card, CardBody, Col, Form, Row, Label, Button } from "reactstrap";
 import { isObjEmpty } from "../../utils/Utils";
 import classnames from 'classnames';
-import { useCreateTaskMutation } from "../../redux/api/taskAPI";
+import { useCreateTaskMutation, useGetTaskAssistancesQuery } from "../../redux/api/taskAPI";
 import Autocomplete from 'react-google-autocomplete';
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -25,9 +25,14 @@ const AdminShippingCreate = () => {
     };
     const { data: volunteers, refetch, isLoading: isLoadingVolunteer } = useGetUsersQuery(queryParams);
 
+    const { data: assistances, refetch: refetchAssistance, isLoading: isLoadingAssistance } = useGetTaskAssistancesQuery();
+
     useEffect(() => {
         refetch();
-    }, [refetch]);
+        refetchAssistance();
+    }, [refetch, refetchAssistance]);
+
+    console.log(assistances);
 
     const [createTask, { isLoading, isError, error, isSuccess, data }] = useCreateTaskMutation();
 
@@ -122,6 +127,27 @@ const AdminShippingCreate = () => {
                                             </select>
                                             {errors.assign && (
                                                 <small className="text-danger">{errors.assign.message}</small>
+                                            )}
+                                        </div>
+                                    </Col>
+
+                                    <Col md={6}>
+                                        <div className="mb-2">
+                                            <Label>Assign Assistance</Label>
+                                            <select
+                                                className={`form-control ${classnames({ 'is-invalid': errors.assign })}`}
+                                                {...register('assistance', { required: 'Assign Assistance is required.' })}
+                                                disabled={isLoadingAssistance}
+                                            >
+                                                <option value="">Select Assistance</option>
+                                                {assistances?.map((assistance) => (
+                                                    <option key={assistance._id} value={assistance._id}>
+                                                        {assistance.type} 
+                                                    </option>
+                                                ))}
+                                            </select>
+                                            {errors.assistance && (
+                                                <small className="text-danger">{errors.assistance.message}</small>
                                             )}
                                         </div>
                                     </Col>
