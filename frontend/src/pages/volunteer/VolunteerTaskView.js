@@ -69,7 +69,7 @@ const VolunteerTaskView = () => {
         <div className="container main-view">
             <Row className="mt-4">
                 <Col>
-                    <h2 className="text-center">Task Details</h2>
+                    <h2 className="text-start">Task Detail</h2>
                 </Col>
             </Row>
             <Card className="shadow-sm mt-4">

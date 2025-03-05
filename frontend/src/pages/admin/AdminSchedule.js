@@ -26,30 +26,60 @@ const AdminSchedule = () => {
         register,
         handleSubmit,
         reset,
+        setValue,
         formState: { errors },
     } = useForm();
 
     const [events, setEvents] = useState([]);
     const [modal, setModal] = useState(false);
     const [notificationAlert, setNotificationAlert] = useState(false);
+    const [selectedEvent, setSelectedEvent] = useState(null);
 
     // Toggle modal
     const toggleModal = () => {
         setModal(!modal);
+        // if (!modal) {
+        //     reset();
+        //     setSelectedEvent(null);
+        // }
     };
 
-    // Add new event handler
+    // Handle event click to view/edit event details
+    const handleEventClick = (event) => {
+        console.log(event, "---------")
+        setSelectedEvent(event); // Set selected event to show in modal
+        setValue('title', event.title);
+        setValue('type', event.type);
+        setValue('start', moment(event.start).format('YYYY-MM-DDTHH:mm'));
+        setValue('end', moment(event.end).format('YYYY-MM-DDTHH:mm'));
+        toggleModal(); // Show modal
+    };
+
+    // Add or update event handler
     const onSubmit = (data) => {
         const { title, type, start, end } = data;
         const startDate = new Date(start);
         const endDate = new Date(end);
 
         if (startDate > endDate) {
-            alert("End date must be after start date.");
+            alert('End date must be after start date.');
             return;
         }
 
-        setEvents([...events, { title, type, start: startDate, end: endDate }]);
+        if (selectedEvent) {
+            // Update existing event
+            setEvents(
+                events.map((event) =>
+                    event === selectedEvent
+                        ? { ...event, title, type, start: startDate, end: endDate }
+                        : event
+                )
+            );
+        } else {
+            // Add new event (if applicable, though this part might not be required anymore)
+            setEvents([...events, { title, type, start: startDate, end: endDate }]);
+        }
+
         reset();
         toggleModal();
         setNotificationAlert(true);
@@ -57,10 +87,10 @@ const AdminSchedule = () => {
     };
 
     return (
-        <Container>
+        <Container className="main-view">
             <Row>
                 <Col>
-                    <h2 className="my-4 text-center">Admin Activity Scheduler</h2>
+                    <h2 className="my-4 text-start">Activity Scheduler</h2>
                     <Button color="orange" onClick={toggleModal}>
                         Add New Event
                     </Button>
@@ -71,7 +101,7 @@ const AdminSchedule = () => {
                 <Col>
                     {notificationAlert && (
                         <Alert color="success">
-                            Notifications sent to Volunteers and Donors for the new event!
+                            Notifications sent to Volunteers and Donors for the event!
                         </Alert>
                     )}
                     <Calendar
@@ -79,14 +109,17 @@ const AdminSchedule = () => {
                         events={events}
                         startAccessor="start"
                         endAccessor="end"
-                        style={{ height: 500 }}
+                        style={{ height: 600 }}
+                        onSelectEvent={(event) => handleEventClick(event)} // Open modal when event is clicked
                     />
                 </Col>
             </Row>
 
-            {/* Add Event Modal */}
+            {/* Add/Edit Event Modal */}
             <Modal isOpen={modal} toggle={toggleModal}>
-                <ModalHeader toggle={toggleModal}>Add New Event</ModalHeader>
+                <ModalHeader toggle={toggleModal}>
+                    {selectedEvent ? 'Edit Event' : 'Add New Event'}
+                </ModalHeader>
                 <ModalBody>
                     <Form onSubmit={handleSubmit(onSubmit)}>
                         <FormGroup>
@@ -117,10 +150,10 @@ const AdminSchedule = () => {
                                     required: 'Event type is required.',
                                 })}
                             >
-                                <option value="" style={{ color: 'black' }}>Select type</option>
-                                <option value="Donation Drive" style={{ color: '#007bff' }}>Donation Drive</option>
-                                <option value="Distribution Event" style={{ color: '#28a745' }}>Distribution Event</option>
-                                <option value="Volunteer Meetup" style={{ color: '#ffc107' }}>Volunteer Meetup</option>
+                                <option value="">Select type</option>
+                                <option value="Donation Drive">Donation Drive</option>
+                                <option value="Distribution Event">Distribution Event</option>
+                                <option value="Volunteer Meetup">Volunteer Meetup</option>
                             </select>
                             {errors.type && (
                                 <small className="text-danger">{errors.type.message}</small>
@@ -155,7 +188,7 @@ const AdminSchedule = () => {
                             )}
                         </FormGroup>
                         <Button type="submit" color="orange" className="mx-2">
-                            Add Event
+                            {selectedEvent ? 'Update Event' : 'Add Event'}
                         </Button>
                         <Button
                             type="button"

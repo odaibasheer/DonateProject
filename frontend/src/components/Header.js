@@ -202,6 +202,11 @@ const Header = () => {
                                         Report
                                     </NavLink>
                                 </NavItem>
+                                <NavItem className="nav-item-responsive">
+                                    <NavLink onClick={() => { navigate('/admin/message'); mobileToggle(); }}>
+                                        Message
+                                    </NavLink>
+                                </NavItem>
                                 <UncontrolledDropdown nav inNavbar>
                                     <DropdownToggle nav caret>
                                         <img src={userImg} alt="user" className="user-img" />
