@@ -38,6 +38,24 @@ export const taskAPI = createApi({
                     : [{ type: 'Tasks', id: 'LIST' }],
         }),
 
+        updateTaskStatus: builder.mutation({
+            query({ id, task }) {
+                return {
+                    url: `/tasks/update/${id}`,
+                    method: 'PUT',
+                    credentials: 'include',
+                    body: task,
+                };
+            },
+            invalidatesTags: (result, _error, { id }) =>
+                result
+                    ? [
+                        { type: 'Tasks', id },
+                        { type: 'Tasks', id: 'LIST' },
+                    ]
+                    : [{ type: 'Tasks', id: 'LIST' }],
+        }),
+
         // Get a Single Task
         getTask: builder.query({
             query(id) {
@@ -53,6 +71,20 @@ export const taskAPI = createApi({
         getTasks: builder.query({
             query: () => ({
                 url: '/tasks',
+                credentials: 'include',
+            }),
+            providesTags: (result) =>
+                result
+                    ? [
+                        ...result.map(({ _id }) => ({ type: 'Tasks', id: _id })),
+                        { type: 'Tasks', id: 'LIST' },
+                    ]
+                    : [{ type: 'Tasks', id: 'LIST' }],
+        }),
+
+        getVolunteerTasks: builder.query({
+            query: () => ({
+                url: '/tasks/volunteers',
                 credentials: 'include',
             }),
             providesTags: (result) =>
@@ -92,4 +124,6 @@ export const {
     useGetTasksQuery,
     useDeleteTaskMutation,
     useGetTaskAssistancesQuery,
+    useUpdateTaskStatusMutation,
+    useGetVolunteerTasksQuery,
 } = taskAPI;

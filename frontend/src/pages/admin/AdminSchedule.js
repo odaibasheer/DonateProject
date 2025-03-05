@@ -10,14 +10,13 @@ import {
     Modal,
     ModalHeader,
     ModalBody,
-    ModalFooter,
     Form,
     FormGroup,
     Label,
-    Input,
     Alert,
 } from 'reactstrap';
 import { useForm } from 'react-hook-form';
+import classnames from 'classnames';
 
 // Localizer for react-big-calendar
 const localizer = momentLocalizer(moment);
@@ -62,7 +61,7 @@ const AdminSchedule = () => {
             <Row>
                 <Col>
                     <h2 className="my-4 text-center">Admin Activity Scheduler</h2>
-                    <Button color="primary" onClick={toggleModal}>
+                    <Button color="orange" onClick={toggleModal}>
                         Add New Event
                     </Button>
                 </Col>
@@ -92,8 +91,9 @@ const AdminSchedule = () => {
                     <Form onSubmit={handleSubmit(onSubmit)}>
                         <FormGroup>
                             <Label for="title">Event Title</Label>
-                            <Input
+                            <input
                                 type="text"
+                                className={`form-control ${classnames({ 'is-invalid': errors.title })}`}
                                 id="title"
                                 placeholder="Enter event title"
                                 {...register('title', {
@@ -103,7 +103,6 @@ const AdminSchedule = () => {
                                         message: 'Title cannot exceed 100 characters.',
                                     },
                                 })}
-                                invalid={errors.title ? true : false}
                             />
                             {errors.title && (
                                 <small className="text-danger">{errors.title.message}</small>
@@ -111,32 +110,31 @@ const AdminSchedule = () => {
                         </FormGroup>
                         <FormGroup>
                             <Label for="type">Event Type</Label>
-                            <Input
-                                type="select"
+                            <select
+                                className={`form-control ${classnames({ 'is-invalid': errors.type })}`}
                                 id="type"
                                 {...register('type', {
                                     required: 'Event type is required.',
                                 })}
-                                invalid={errors.type ? true : false}
                             >
-                                <option value="">Select type</option>
-                                <option value="Donation Drive">Donation Drive</option>
-                                <option value="Distribution Event">Distribution Event</option>
-                                <option value="Volunteer Meetup">Volunteer Meetup</option>
-                            </Input>
+                                <option value="" style={{ color: 'black' }}>Select type</option>
+                                <option value="Donation Drive" style={{ color: '#007bff' }}>Donation Drive</option>
+                                <option value="Distribution Event" style={{ color: '#28a745' }}>Distribution Event</option>
+                                <option value="Volunteer Meetup" style={{ color: '#ffc107' }}>Volunteer Meetup</option>
+                            </select>
                             {errors.type && (
                                 <small className="text-danger">{errors.type.message}</small>
                             )}
                         </FormGroup>
                         <FormGroup>
                             <Label for="start">Start Date and Time</Label>
-                            <Input
+                            <input
+                                className={`form-control ${classnames({ 'is-invalid': errors.start })}`}
                                 type="datetime-local"
                                 id="start"
                                 {...register('start', {
                                     required: 'Start date and time are required.',
                                 })}
-                                invalid={errors.start ? true : false}
                             />
                             {errors.start && (
                                 <small className="text-danger">{errors.start.message}</small>
@@ -144,26 +142,26 @@ const AdminSchedule = () => {
                         </FormGroup>
                         <FormGroup>
                             <Label for="end">End Date and Time</Label>
-                            <Input
+                            <input
                                 type="datetime-local"
+                                className={`form-control ${classnames({ 'is-invalid': errors.end })}`}
                                 id="end"
                                 {...register('end', {
                                     required: 'End date and time are required.',
                                 })}
-                                invalid={errors.end ? true : false}
                             />
                             {errors.end && (
                                 <small className="text-danger">{errors.end.message}</small>
                             )}
                         </FormGroup>
-                        <Button type="submit" color="primary">
+                        <Button type="submit" color="orange" className="mx-2">
                             Add Event
                         </Button>
                         <Button
                             type="button"
                             color="secondary"
                             onClick={toggleModal}
-                            className="ml-2"
+                            className="mx-2"
                         >
                             Cancel
                         </Button>

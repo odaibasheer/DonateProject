@@ -31,6 +31,10 @@ import AdminShipping from './pages/admin/AdminShipping';
 import AdminShippingCreate from './pages/admin/AdminShippingCreate';
 import AdminShippingUpdate from './pages/admin/AdminShippingUpdate';
 import AdminSchedule from './pages/admin/AdminSchedule';
+import AdminTransparencyReport from './pages/admin/AdminTransparencyReport ';
+import AdminRequests from './pages/admin/AdminRequest';
+import AdminRequestView from './pages/admin/AdminRequestView';
+import VolunteerTaskView from './pages/volunteer/VolunteerTaskView';
 
 const App = () => {
     const getHomeRoute = () => {
@@ -63,6 +67,7 @@ const App = () => {
                     </Route>
                     <Route element={<RequiredUser allowedRoles={['Volunteer']} />}>
                         <Route path="volunteer/tasks" element={<VolunteerTasks />} />
+                        <Route path="volunteer/tasks/view-task/:id" element={<VolunteerTaskView />} />
                         <Route path="volunteer/profile" element={<VolunteerProfile />} />
                     </Route>
                     <Route element={<RequiredUser allowedRoles={['Admin']} />}>
@@ -75,6 +80,9 @@ const App = () => {
                         <Route path="admin/users/update-user/:id" element={<AdminUserUpdate />} />
                         <Route path="admin/inventory" element={<AdminInventory />} />
                         <Route path="admin/schedule" element={<AdminSchedule />} />
+                        <Route path="admin/report" element={<AdminTransparencyReport />} />
+                        <Route path="admin/requests" element={<AdminRequests />} />
+                        <Route path="admin/requests/item-view/:id" element={<AdminRequestView />} />
                     </Route>
                     <Route path="admin/login" element={<AdminLogin />} />
                     <Route path="login" element={<Login />} />

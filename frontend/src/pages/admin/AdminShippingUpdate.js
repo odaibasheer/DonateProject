@@ -8,7 +8,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { toast } from 'react-toastify';
 import Autocomplete from 'react-google-autocomplete';
 import { useGetUsersQuery } from "../../redux/api/userAPI";
-import { useUpdateTaskMutation, useGetTaskQuery } from "../../redux/api/taskAPI";
+import { useUpdateTaskMutation, useGetTaskQuery, useGetTaskAssistancesQuery } from "../../redux/api/taskAPI";
 
 const AdminShippingUpdate = () => {
     const navigate = useNavigate();
@@ -27,9 +27,16 @@ const AdminShippingUpdate = () => {
     // Fetch task details by ID
     const { data: task, isLoading: isLoadingTask } = useGetTaskQuery(id);
 
+
     // Fetch volunteers
     const queryParams = { role: "Volunteer" };
-    const { data: volunteers, isLoading: isLoadingVolunteer } = useGetUsersQuery(queryParams);
+    const { data: volunteers, refetch, isLoading: isLoadingVolunteer } = useGetUsersQuery(queryParams);
+    const { data: assistances, refetch: refetchAssistance, isLoading: isLoadingAssistance } = useGetTaskAssistancesQuery();
+
+    useEffect(() => {
+        refetch();
+        refetchAssistance();
+    }, [refetch, refetchAssistance]);
 
     // Update task mutation
     const [updateTask, { isLoading, isError, error, isSuccess }] = useUpdateTaskMutation();
@@ -40,6 +47,7 @@ const AdminShippingUpdate = () => {
             console.log(task)
             setValue("type", task.type);
             setValue("assign", task.assign?._id || "");
+            setValue("assistance", task.assistance?._id || "");
             setValue("urgency", task.urgency);
             setLocationObj(task.location);
         }
@@ -54,7 +62,7 @@ const AdminShippingUpdate = () => {
         }
         if (isObjEmpty(errors)) {
             data.location = locationObj;
-            updateTask({ id, ...data });
+            updateTask({ id, task: data });
         }
     };
 
@@ -136,6 +144,27 @@ const AdminShippingUpdate = () => {
                                                 </select>
                                                 {errors.assign && (
                                                     <small className="text-danger">{errors.assign.message}</small>
+                                                )}
+                                            </div>
+                                        </Col>
+
+                                        <Col md={6}>
+                                            <div className="mb-2">
+                                                <Label>Assign Assistance</Label>
+                                                <select
+                                                    className={`form-control ${classnames({ 'is-invalid': errors.assign })}`}
+                                                    {...register('assistance', { required: 'Assign Assistance is required.' })}
+                                                    disabled={isLoadingAssistance}
+                                                >
+                                                    <option value="">Select Assistance</option>
+                                                    {assistances?.map((assistance) => (
+                                                        <option key={assistance._id} value={assistance._id}>
+                                                            {assistance.type}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                                {errors.assistance && (
+                                                    <small className="text-danger">{errors.assistance.message}</small>
                                                 )}
                                             </div>
                                         </Col>

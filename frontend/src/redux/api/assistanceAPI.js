@@ -36,6 +36,25 @@ export const assistanceAPI = createApi({
                     : [{ type: 'Assistance', id: 'LIST' }],
             transformResponse: (response) => response,
         }),
+
+        updateAssistanceStatus: builder.mutation({
+            query({ id, assistance }) {
+                return {
+                    url: `/assistances/update-status/${id}`,
+                    method: 'PUT',
+                    credentials: 'include',
+                    body: assistance,
+                };
+            },
+            invalidatesTags: (result, _error, { id }) =>
+                result
+                    ? [
+                        { type: 'Assistance', id },
+                        { type: 'Assistance', id: 'LIST' },
+                    ]
+                    : [{ type: 'Assistance', id: 'LIST' }],
+            transformResponse: (response) => response,
+        }),
         getAssistance: builder.query({
             query(id) {
                 return {
@@ -93,4 +112,5 @@ export const {
     useGetAssistancesQuery,
     useDeleteAssistanceMutation,
     useGetMyAssistancesQuery,
+    useUpdateAssistanceStatusMutation,
 } = assistanceAPI;

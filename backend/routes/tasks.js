@@ -23,16 +23,39 @@ router.get('/', verifyToken(['Admin', 'Donor', 'Needy', 'Volunteer']), async (re
     }
 });
 
+// volunteer tasks
+router.get('/volunteers', verifyToken(['Volunteer']), async (req, res) => {
+    try {
+        const tasks = await Task.find({ assign: req.user._id })
+            .select('-__v')
+            .populate({
+                path: 'assign',
+                select: 'username email role',
+            })
+            .populate({
+                path: 'assistance',
+            });
+
+        return res.status(200).send(tasks);
+    } catch (error) {
+        return res.status(500).send({
+            status: "error",
+            message: error.message,
+        });
+    }
+});
+
 // Create a new task
 router.post('/create', verifyToken(['Admin', 'Volunteer']), async (req, res) => {
     try {
-        const { type, location, assign, status, urgency } = req.body;
+        const { type, location, assign, status, urgency, assistance } = req.body;
 
         const newTask = new Task({
             type,
             location: location.formatted_address,
             assign,
             status,
+            assistance,
             urgency,
         });
 
@@ -60,6 +83,10 @@ router.get('/getOneTask/:id', verifyToken(['Admin', 'Volunteer']), async (req, r
             .populate({
                 path: 'assign',
                 select: 'username email role',
+            })
+            .populate({
+                path: 'assistance',
+                // select: 'type',
             });
 
         if (!task) {
@@ -83,12 +110,12 @@ router.get('/getOneTask/:id', verifyToken(['Admin', 'Volunteer']), async (req, r
 router.put('/update/:id', verifyToken(['Volunteer', 'Admin']), async (req, res) => {
     try {
         const { id } = req.params;
-        const { type, location, assign, status, urgency } = req.body;
-
+        const { type, location, assign, status, urgency, assistance } = req.body;
         const updatedData = {};
         if (type) updatedData.type = type;
         if (location) updatedData.location = location;
         if (assign) updatedData.assign = assign;
+        if (assistance) updatedData.assistance = assistance;
         if (status) updatedData.status = status;
         if (urgency) updatedData.urgency = urgency;
 

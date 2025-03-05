@@ -173,13 +173,13 @@ const Header = () => {
                         {user && user.role === 'Admin' && (
                             <Nav className="ms-auto" navbar>
                                 <NavItem className="nav-item-responsive">
-                                    <NavLink onClick={() => { navigate('/admin/dashboard'); mobileToggle(); }}>
-                                        Dashboard
+                                    <NavLink onClick={() => { navigate('/admin/inventory'); mobileToggle(); }}>
+                                        Inventory
                                     </NavLink>
                                 </NavItem>
                                 <NavItem className="nav-item-responsive">
-                                    <NavLink onClick={() => { navigate('/admin/inventory'); mobileToggle(); }}>
-                                        Inventory
+                                    <NavLink onClick={() => { navigate('/admin/requests'); mobileToggle(); }}>
+                                        Requests
                                     </NavLink>
                                 </NavItem>
                                 <NavItem className="nav-item-responsive">
@@ -195,6 +195,11 @@ const Header = () => {
                                 <NavItem className="nav-item-responsive">
                                     <NavLink onClick={() => { navigate('/admin/schedule'); mobileToggle(); }}>
                                         Schedule
+                                    </NavLink>
+                                </NavItem>
+                                <NavItem className="nav-item-responsive">
+                                    <NavLink onClick={() => { navigate('/admin/report'); mobileToggle(); }}>
+                                        Report
                                     </NavLink>
                                 </NavItem>
                                 <UncontrolledDropdown nav inNavbar>

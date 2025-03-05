@@ -146,4 +146,35 @@ router.delete("/delete/:id", verifyToken(["Admin"]), async (req, res) => {
     }
 });
 
+router.put("/update-status/:id", verifyToken(["Admin"]), async (req, res) => {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    // Validate request body
+    if (!status || !["Pending", "Approved", "Declined"].includes(status)) {
+        return res.status(400).send({ message: "Invalid status. Allowed values are 'Pending', 'Approved', or 'Declined'." });
+    }
+
+    try {
+        // Update the status of the assistance
+        const assistance = await Assistance.findOneAndUpdate(
+            { _id: id },
+            { status },
+            { new: true } // Return the updated document
+        );
+
+        if (!assistance) {
+            return res.status(404).send({ message: "Assistance not found." });
+        }
+
+        return res.status(200).send({
+            message: "Status successfully changed!",
+            updatedAssistance: assistance,
+        });
+    } catch (error) {
+        console.error("Error updating assistance status:", error);
+        return res.status(500).send({ message: "Server error occurred while changing the assistance status." });
+    }
+});
+
 module.exports = router;
