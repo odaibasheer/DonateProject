@@ -2,20 +2,29 @@ import { Fragment, useEffect, useState } from "react";
 import AdminMessageSidebarLeft from "../../components/AdminMessageSidebarLeft";
 import { useGetContactsQuery } from "../../redux/api/contactAPI";
 import AdminChat from "../../components/AdminChat";
+import { useGetContactUsersQuery } from "../../redux/api/userAPI";
 
 const AdminMessage = () => {
     const { data: chats, refetch } = useGetContactsQuery();
+    const queryParams = {
+        role: "!Admin"
+    };
+    const { data: contactUsers, refetch: refetchContact } = useGetContactUsersQuery(queryParams);
     const [messages, setMessages] = useState({});
     const [selectedContact, setSelectedContact] = useState({
         contactId: null
     });
     const [selectedUser, setSelectedUser] = useState({
-        provider: null
+        client: null
     });
+    const [filteredUsers, setFilteredUsers] = useState([]);
 
     useEffect(() => {
         refetch();
+        refetchContact();
     }, [messages]);
+
+    console.log(contactUsers);
 
     return (
         <div className="container main-view">
@@ -28,6 +37,10 @@ const AdminMessage = () => {
                         messages={messages}
                         setMessages={setMessages}
                         chats={chats}
+                        contactUsers={contactUsers}
+                        refetch={refetch}
+                        filteredUsers={filteredUsers}
+                        setFilteredUsers={setFilteredUsers}
                     />
                     <div className="content-right">
                         <div className="content-wrapper">
@@ -47,7 +60,7 @@ const AdminMessage = () => {
                 </Fragment>
             </div>
         </div>
-    )
-}
+    );
+};
 
 export default AdminMessage;

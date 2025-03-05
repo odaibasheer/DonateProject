@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Col, Row, Card, UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem, Badge, Modal, ModalHeader, ModalFooter, Button, ModalBody } from "reactstrap";
 import { useDeleteTaskMutation, useGetTasksQuery } from "../../redux/api/taskAPI";
 import { useEffect, useState } from "react";

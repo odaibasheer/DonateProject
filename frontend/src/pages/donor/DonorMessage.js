@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Fragment, useEffect, useState } from "react";
 import { useGetContactsQuery } from "../../redux/api/contactAPI";
 import ClientMessageSidebarLeft from "../../components/ClientMessageSidebarLeft";
@@ -15,7 +16,7 @@ const DonorMessage = () => {
 
     useEffect(() => {
         refetch();
-    }, [messages]);
+    }, [messages, refetch]);
 
     return (
         <div className="container main-view">

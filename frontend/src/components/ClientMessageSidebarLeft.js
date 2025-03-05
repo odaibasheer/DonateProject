@@ -10,7 +10,7 @@ import { CardText, InputGroup, InputGroupText, Badge, Input } from 'reactstrap';
 import userImg from '../assets/images/user.png';
 import io from 'socket.io-client';
 import { useReadMessageMutation } from '../redux/api/contactAPI';
-import { getDateFormat } from '../utils/Utils';
+import { formatDate, getDateFormat } from '../utils/Utils';
 import Avatar from './Avatar';
 import { useAppSelector } from '../redux/store';
 
@@ -28,12 +28,13 @@ const ClientMessageSidebarLeft = ({ chats, setSelectedContact, setSelectedUser }
     const [readMessage] = useReadMessageMutation();
 
     // ** Handle User Click
-    const handleUserClick = async (id, provider) => {
+    const handleUserClick = async (id, admin) => {
+        console.log(admin)
         socket.emit('joinRoom', id);
         setSelectedContact({ contactId: id });
-        setSelectedUser({ provider });
+        setSelectedUser({ admin });
         setActive(id);
-        await readMessage({ contactId: id, data: provider._id });
+        await readMessage({ contactId: id, data: admin._id });
     };
 
     // ** Filter Chats
@@ -42,7 +43,7 @@ const ClientMessageSidebarLeft = ({ chats, setSelectedContact, setSelectedUser }
         setQuery(searchValue);
 
         const filterFunction = (contact) => {
-            const name = user.role === 'client' ? contact.provider.firstName : contact.client.firstName;
+            const name = contact.admin?.username;
             return name.toLowerCase().includes(searchValue);
         };
 
@@ -65,17 +66,13 @@ const ClientMessageSidebarLeft = ({ chats, setSelectedContact, setSelectedUser }
 
         return chatList.map((item) => {
             const time = item.lastMessage ? item.lastMessage.createdAt : new Date();
-            const name =
-                user.role === 'client'
-                    ? `${item.provider.firstName} ${item.provider.lastName}`
-                    : `${item.client.firstName} ${item.client.lastName}`;
-            const avatarImg =
-                user.role === 'client' ? item.provider.avatar || userImg : item.client.avatar || userImg;
+            const name = item.admin.username;
+            const avatarImg = item.admin?.avatar || userImg;
 
             return (
                 <li
                     key={item._id}
-                    onClick={() => handleUserClick(item._id, item.provider)}
+                    onClick={() => handleUserClick(item._id, item.admin)}
                     className={classnames({ active: active === item._id })}>
                     <Avatar
                         img={avatarImg}
@@ -88,7 +85,7 @@ const ClientMessageSidebarLeft = ({ chats, setSelectedContact, setSelectedUser }
                         <CardText className="text-truncate">{item.lastMessage?.content || ''}</CardText>
                     </div>
                     <div className="chat-meta text-nowrap">
-                        <small className="float-end mb-25 chat-time ms-25">{getDateFormat(time)}</small>
+                        <small className="float-end mb-25 chat-time ms-25">{formatDate(time)}</small>
                         {item.unreadCount > 0 && (
                             <Badge className="float-end" color="danger" pill>
                                 {item.unreadCount}

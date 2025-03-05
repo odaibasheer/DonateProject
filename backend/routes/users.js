@@ -91,6 +91,36 @@ router.get('/', verifyToken(['Admin', 'Donor', 'Needy', 'Volunteer']), async (re
     })
 });
 
+router.get('/contacts', verifyToken(['Admin', 'Donor', 'Needy', 'Volunteer']), async (req, res) => {
+    try {
+        // Determine the role filter
+        let roleFilter = {};
+        if (req.query.role) {
+            if (req.query.role === 'Admin') {
+                roleFilter = { role: 'Admin' };
+            } else if (req.query.role === '!Admin') {
+                roleFilter = { role: { $ne: 'Admin' } };
+            } else {
+                roleFilter = { role: req.query.role };
+            }
+        }
+
+        const filterParams = {
+            $and: [
+                roleFilter,
+            ],
+        };
+
+        const users = await User.find(filterParams).select('-password -__v');
+
+        return res.send(users);
+    } catch (error) {
+        console.error('Error fetching users:', error);
+        return res.status(500).send({ error: 'Internal server error' });
+    }
+});
+
+
 // Get One User by ID
 router.get('/getOneUser/:id', verifyToken(['Admin', 'Volunteer']), async (req, res) => {
     const userId = req.params.id;

@@ -55,21 +55,21 @@ export const contactAPI = createApi({
                     method: 'PUT',
                     credentials: 'include',
                     body: {
-                        provider: data
+                        client: data
                     }
                 };
             },
             invalidatesTags: [{ type: 'Contacts', id: 'LIST' }],
             transformResponse: (result) => result
         }),
-        readProviderMessage: builder.mutation({
+        readClientMessage: builder.mutation({
             query({ contactId, data }) {
                 return {
                     url: `/contacts/read/${contactId}`,
                     method: 'PUT',
                     credentials: 'include',
                     body: {
-                        client: data
+                        admin: data
                     }
                 };
             },
@@ -79,4 +79,4 @@ export const contactAPI = createApi({
     })
 });
 
-export const { useCreateContactMutation, useGetContactsQuery, useSelectChatQuery, useReadProviderMessageMutation, useReadMessageMutation } = contactAPI;
+export const { useCreateContactMutation, useGetContactsQuery, useSelectChatQuery, useReadClientMessageMutation, useReadMessageMutation } = contactAPI;

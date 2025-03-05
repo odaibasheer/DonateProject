@@ -1,6 +1,5 @@
-/* eslint-disable react/no-find-dom-node */
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
-import ReactDOM from 'react-dom';
 import classnames from 'classnames';
 import { MessageSquare, Menu, Send } from 'react-feather';
 import { useEffect, useRef, useState } from 'react';
@@ -15,7 +14,6 @@ import { useAppSelector } from '../redux/store';
 
 const socket = io('http://localhost:3005');
 
-/* eslint-disable no-unused-vars */
 const AdminChat = (props) => {
     const { messages, setMessages, selectedContact, selectedUser } = props;
     const [msg, setMsg] = useState('');
@@ -27,13 +25,13 @@ const AdminChat = (props) => {
 
     // ** Scroll to chat bottom
     const scrollToBottom = () => {
-        const chatContainer = ReactDOM.findDOMNode(chatArea.current);
-        chatContainer.scrollTop = Number.MAX_SAFE_INTEGER;
+        if (chatArea.current) {
+            chatArea.current.scrollTop = Number.MAX_SAFE_INTEGER;
+        }
     };
 
     useEffect(() => {
-        const messagesLen = messages ? Object.keys(messages).length : 0;
-        if (messagesLen) {
+        if (messages?.chats?.length) {
             scrollToBottom();
         }
     }, [messages]);
@@ -70,8 +68,8 @@ const AdminChat = (props) => {
                 room: selectedContact.contactId,
                 text: msg,
                 sender: user._id,
-                receiver: selectedUser?.provider._id,
-                contact: selectedContact.contactId
+                receiver: selectedUser?.client._id,
+                contact: selectedContact.contactId,
             };
             socket.emit('chatMessage', message);
             setMsg('');
@@ -80,35 +78,26 @@ const AdminChat = (props) => {
 
     // ** Formats chat data based on sender
     const formattedChatData = () => {
-        let chatLog = [];
-        if (messages.chats) {
-            chatLog = messages.chats;
-        }
+        const chatLog = messages?.chats || [];
         const formattedChatLog = [];
-        let chatMessageSenderId = chatLog.length > 0 ? chatLog[chatLog.length - 1].sender[0]._id : undefined;
+        let chatMessageSenderId = chatLog[0]?.sender[0]._id || undefined;
+
         let msgGroup = {
             senderId: chatMessageSenderId,
-            senderAvatar: chatLog.length > 0 ? (chatLog[chatLog.length - 1].sender[0].avatar ? chatLog[chatLog.length - 1].sender[0].avatar : userImg) : undefined,
-            messages: []
+            senderAvatar: chatLog[0]?.sender[0].avatar || userImg,
+            messages: [],
         };
+
         chatLog.forEach((msg, index) => {
             if (chatMessageSenderId === msg.sender[0]._id) {
-                msgGroup.messages.push({
-                    msg: msg.content,
-                    time: msg.createdAt
-                });
+                msgGroup.messages.push({ msg: msg.content, time: msg.createdAt });
             } else {
-                chatMessageSenderId = msg.sender[0]._id;
                 formattedChatLog.push(msgGroup);
+                chatMessageSenderId = msg.sender[0]._id;
                 msgGroup = {
                     senderId: msg.sender[0]._id,
-                    senderAvatar: msg.sender[0].avatar ? msg.sender[0].avatar : userImg,
-                    messages: [
-                        {
-                            msg: msg.content,
-                            time: msg.createdAt
-                        }
-                    ]
+                    senderAvatar: msg.sender[0].avatar || userImg,
+                    messages: [{ msg: msg.content, time: msg.createdAt }],
                 };
             }
             if (index === chatLog.length - 1) formattedChatLog.push(msgGroup);
@@ -118,41 +107,42 @@ const AdminChat = (props) => {
 
     // ** Renders user chat
     const renderChats = () => {
-        return formattedChatData().map((item, index) => {
-            return (
-                <div
-                    key={index}
-                    className={classnames('chat', {
-                        'chat-left': item.senderId !== user._id
-                    })}>
-                    <div className="chat-avatar">
-                        <Avatar imgWidth={36} imgHeight={36} className="box-shadow-1 cursor-pointer" img={item.senderAvatar} />
-                    </div>
-
-                    <div className="chat-body">
-                        {item.messages.map((chat, index1) => (
-                            <div key={index1} className="chat-content">
-                                <p>{chat.msg}</p>
-                            </div>
-                        ))}
-                    </div>
+        return formattedChatData().map((item, index) => (
+            <div
+                key={index}
+                className={classnames('chat', { 'chat-left': item.senderId !== user._id })}
+            >
+                <div className="chat-avatar">
+                    <Avatar
+                        imgWidth={36}
+                        imgHeight={36}
+                        className="box-shadow-1 cursor-pointer"
+                        img={item.senderAvatar}
+                    />
                 </div>
-            );
-        });
+                <div className="chat-body">
+                    {item.messages.map((chat, index1) => (
+                        <div key={index1} className="chat-content">
+                            <p>{chat.msg}</p>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        ));
     };
 
-    // ** ChatWrapper tag based on chat's length
-    const ChatWrapper = messages && Object.keys(messages).length && messages.chats ? PerfectScrollbar : 'div';
+    const ChatWrapper = messages?.chats?.length ? PerfectScrollbar : 'div';
+
     return (
         <div className="chat-app-window">
-            <div className={classnames('start-chat-area', { 'd-none': (messages && messages.chats && messages.chats.length > 0) || selectedUser.provider })}>
+            <div className={classnames('start-chat-area', { 'd-none': messages?.chats?.length || selectedUser.client })}>
                 <div className="start-chat-icon mb-1">
                     <MessageSquare />
                 </div>
                 <h5 className="sidebar-toggle start-chat-text">Start Conversation</h5>
             </div>
-            {selectedUser && Object.keys(selectedUser).length ? (
-                <div className={classnames('active-chat', { 'd-none': selectedUser.provider === null })}>
+            {selectedUser?.client && (
+                <div className="active-chat">
                     <div className="chat-navbar">
                         <div className="chat-header">
                             <div className="d-flex align-items-center">
@@ -162,32 +152,32 @@ const AdminChat = (props) => {
                                 <Avatar
                                     imgHeight="36"
                                     imgWidth="36"
-                                    img={selectedUser.provider?.avatar ? selectedUser.provider.avatar : userImg}
-                                    // status={selectedUser?.provider?.status}
+                                    img={selectedUser.client?.avatar || userImg}
                                     className="avatar-border user-profile-toggle m-0 me-3"
                                 />
                                 <h6 className="mb-0">
-                                    {selectedUser.provider?.firstName} {selectedUser.provider?.lastName}
+                                    {selectedUser.client.username}
                                 </h6>
                             </div>
                         </div>
                     </div>
-
-                    <ChatWrapper ref={chatArea} className="user-chats" options={{ wheelPropagation: false }}>
-                        {messages && messages.chats ? <div className="chats">{renderChats()}</div> : null}
+                    <ChatWrapper containerRef={(ref) => (chatArea.current = ref)} className="user-chats" options={{ wheelPropagation: false }} style={{ overflowX: 'hidden' }}>
+                        {messages?.chats && <div className="chats">{renderChats()}</div>}
                     </ChatWrapper>
-
-                    <Form className="chat-app-form" onSubmit={(e) => handleSendMsg(e)}>
+                    <Form className="chat-app-form" onSubmit={handleSendMsg}>
                         <InputGroup className="input-group-merge me-3 form-send-message">
-                            <Input value={msg} onChange={(e) => setMsg(e.target.value)} placeholder="Type your message or use speech to text" />
+                            <Input
+                                value={msg}
+                                onChange={(e) => setMsg(e.target.value)}
+                                placeholder="Type your message or use speech to text"
+                            />
                         </InputGroup>
-                        <Button className="send" color="primary">
-                            <Send size={14} className="d-lg-none" />
-                            <span className="d-none d-lg-block">Send</span>
+                        <Button className="send" color="orange">
+                            <Send size={14} />
                         </Button>
                     </Form>
                 </div>
-            ) : null}
+            )}
         </div>
     );
 };

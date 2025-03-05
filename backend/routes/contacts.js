@@ -11,7 +11,7 @@ router.get('/', verifyToken(["Admin", "Donor", "Needy", "Volunteer"]), async (re
         const aggregation = [
             {
                 $match: {
-                    $or: [{ client: new ObjectId(userId) }, { provider: new ObjectId(userId) }]
+                    $or: [{ client: new ObjectId(userId) }, { admin: new ObjectId(userId) }]
                 }
             },
             {
@@ -25,13 +25,13 @@ router.get('/', verifyToken(["Admin", "Donor", "Needy", "Volunteer"]), async (re
             {
                 $lookup: {
                     from: 'users',
-                    localField: 'provider',
+                    localField: 'admin',
                     foreignField: '_id',
-                    as: 'provider'
+                    as: 'admin'
                 }
             },
             { $unwind: '$client' },
-            { $unwind: '$provider' },
+            { $unwind: '$admin' },
             {
                 $lookup: {
                     from: 'messages',
@@ -95,7 +95,7 @@ router.get('/', verifyToken(["Admin", "Donor", "Needy", "Volunteer"]), async (re
                 $project: {
                     __v: 0,
                     'client.__v': 0,
-                    'provider.__v': 0,
+                    'admin.__v': 0,
                     unreadCountInfo: 0 // Remove helper fields
                 }
             }
@@ -112,12 +112,12 @@ router.get('/', verifyToken(["Admin", "Donor", "Needy", "Volunteer"]), async (re
 
 
 router.post('/create', verifyToken(["Admin", "Donor", "Needy", "Volunteer"]), async (req, res) => {
-    const { provider } = req.body;
-    const existedContact = await Contact.findOne({ client: req.user._id, provider: provider});
+    const { client } = req.body;
+    const existedContact = await Contact.findOne({ admin: req.user._id, client: client});
     if (!existedContact) {
         const contact = new Contact({
-            client: req.user._id,
-            provider: provider
+            admin: req.user._id,
+            client: client
         });
         try {
             const savedContact = await contact.save()
@@ -173,7 +173,7 @@ router.get('/selectChat', verifyToken(["Admin", "Donor", "Needy", "Volunteer"]),
 
 router.put('/read/:contactId', verifyToken(["Admin", "Donor", "Needy", "Volunteer"]), async (req, res) => {
     const contactId = new ObjectId(req.params.contactId);
-    const senderId = req.body.provider ? new ObjectId(req.body.provider) : new ObjectId(req.body.client);
+    const senderId = req.body.client ? new ObjectId(req.body.client) : new ObjectId(req.body.client);
 
     const filterQuery = {
         contact: contactId,

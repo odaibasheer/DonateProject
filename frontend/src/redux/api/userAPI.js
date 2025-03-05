@@ -81,6 +81,22 @@ export const userAPI = createApi({
                     : [{ type: 'Users', id: 'LIST' }],
             transformResponse: (response) => response.users,
         }),
+
+        getContactUsers: builder.query({
+            query: (params) => ({
+                url: '/users/contacts',
+                params,
+                credentials: 'include',
+            }),
+            providesTags: (result) =>
+                result
+                    ? [
+                          ...result.map(({ _id }) => ({ type: 'Users', id: _id })),
+                          { type: 'Users', id: 'LIST' },
+                      ]
+                    : [{ type: 'Users', id: 'LIST' }],
+            transformResponse: (response) => response,
+        }),
         
         getProfile: builder.query({
             query() {
@@ -112,4 +128,5 @@ export const {
     useGetUsersQuery,
     useGetProfileQuery,
     useUpdateProfileMutation,
+    useGetContactUsersQuery,
 } = userAPI;

@@ -47,3 +47,9 @@ export const getDateFormat = (formattedDate) => {
     return formattedDateTime;
 };
 
+export const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const options = { month: 'short', day: 'numeric' };
+    return new Intl.DateTimeFormat('en-US', options).format(date);
+};
+

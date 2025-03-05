@@ -1,61 +1,82 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 
-import { useState } from 'react';
-import classnames from 'classnames';
-import { X, Search } from 'react-feather';
-import PerfectScrollbar from 'react-perfect-scrollbar';
-import 'react-perfect-scrollbar/dist/css/styles.css';
-import { CardText, InputGroup, InputGroupText, Badge, Input } from 'reactstrap';
-import userImg from '../assets/images/user.png';
-import io from 'socket.io-client';
-import { useReadMessageMutation } from '../redux/api/contactAPI';
-import { getDateFormat } from '../utils/Utils';
-import Avatar from './Avatar';
-import { useAppSelector } from '../redux/store';
+import { useState } from "react";
+import classnames from "classnames";
+import { X, Search } from "react-feather";
+import PerfectScrollbar from "react-perfect-scrollbar";
+import "react-perfect-scrollbar/dist/css/styles.css";
+import { CardText, InputGroup, InputGroupText, Badge, Input } from "reactstrap";
+import userImg from "../assets/images/user.png";
+import io from "socket.io-client";
+import { useCreateContactMutation, useReadMessageMutation } from "../redux/api/contactAPI";
+import Avatar from "./Avatar";
+import { useAppSelector } from "../redux/store";
+import { formatDate } from "../utils/Utils";
 
-const socket = io('http://localhost:3005');
+const socket = io("http://localhost:3005");
 
-const AdminMessageSidebarLeft = ({ chats, setSelectedContact, setSelectedUser }) => {
+const AdminMessageSidebarLeft = ({
+    chats,
+    setSelectedContact,
+    setSelectedUser,
+    contactUsers,
+    filteredUsers,
+    setFilteredUsers,
+    refetch,
+}) => {
     // ** Redux State
     const user = useAppSelector((state) => state.userState.user);
 
     // ** Local State
-    const [query, setQuery] = useState('');
+    const [query, setQuery] = useState("");
     const [active, setActive] = useState(0);
-    const [filteredChat, setFilteredChat] = useState([]);
 
     const [readMessage] = useReadMessageMutation();
+    const [createContact] = useCreateContactMutation();
 
-    // ** Handle User Click
-    const handleUserClick = async (id, provider) => {
-        socket.emit('joinRoom', id);
-        setSelectedContact({ contactId: id });
-        setSelectedUser({ provider });
-        setActive(id);
-        await readMessage({ contactId: id, data: provider._id });
+    const handleUserClick = async (contact) => {
+        try {
+            const contactData = { client: contact._id };
+            await createContact(contactData).unwrap();
+            refetch();
+        } catch (error) {
+            console.error("Error creating contact:", error);
+        }
     };
 
-    // ** Filter Chats
+    // ** Handle Chat Click
+    const handleChatClick = async (contactId, contact) => {
+        socket.emit("joinRoom", contactId);
+        setSelectedContact({ contactId });
+        setSelectedUser({ client: contact });
+        setActive(contactId);
+
+        // Mark messages as read
+        await readMessage({ contactId, data: contact._id });
+    };
+
+    // ** Filter Contacts
     const handleFilter = (e) => {
         const searchValue = e.target.value.toLowerCase();
         setQuery(searchValue);
+        if (contactUsers) {
+            if (searchValue !== "") {
+                const filtered = contactUsers.filter((user) => {
+                    const name = `${user.username}`.toLowerCase();
+                    return name.includes(searchValue);
+                });
+                setFilteredUsers(filtered);
+            } else {
+                setFilteredUsers([]);
+            }
 
-        const filterFunction = (contact) => {
-            const name = user.role === 'client' ? contact.provider.firstName : contact.client.firstName;
-            return name.toLowerCase().includes(searchValue);
-        };
-
-        setFilteredChat(chats.filter(filterFunction));
+        }
     };
 
     // ** Render Chats
     const renderChats = () => {
-        if (!chats || !chats.length) return null;
-
-        const chatList = query.length ? filteredChat : chats;
-
-        if (!chatList.length) {
+        if (!chats || !chats.length) {
             return (
                 <li className="no-results show">
                     <h6 className="mb-0">No Chats Found</h6>
@@ -63,37 +84,60 @@ const AdminMessageSidebarLeft = ({ chats, setSelectedContact, setSelectedUser })
             );
         }
 
-        return chatList.map((item) => {
+        return chats.map((item) => {
             const time = item.lastMessage ? item.lastMessage.createdAt : new Date();
-            const name =
-                user.role === 'client'
-                    ? `${item.provider.firstName} ${item.provider.lastName}`
-                    : `${item.client.firstName} ${item.client.lastName}`;
-            const avatarImg =
-                user.role === 'client' ? item.provider.avatar || userImg : item.client.avatar || userImg;
+            const avatarImg = item.client?.avatar || userImg;
+            const name = item.client.username;
 
             return (
                 <li
                     key={item._id}
-                    onClick={() => handleUserClick(item._id, item.provider)}
-                    className={classnames({ active: active === item._id })}>
-                    <Avatar
-                        img={avatarImg}
-                        imgHeight="42"
-                        imgWidth="42"
-                        status={item.status}
-                    />
+                    onClick={() => handleChatClick(item._id, item.client)}
+                    className={classnames({ active: active === item._id })}
+                >
+                    <Avatar img={avatarImg} imgHeight="42" imgWidth="42" />
                     <div className="chat-info flex-grow-1">
                         <h5 className="mb-0">{name}</h5>
-                        <CardText className="text-truncate">{item.lastMessage?.content || ''}</CardText>
+                        <CardText className="text-truncate">
+                            {item.lastMessage ? item.lastMessage.content : ""}
+                        </CardText>
                     </div>
                     <div className="chat-meta text-nowrap">
-                        <small className="float-end mb-25 chat-time ms-25">{getDateFormat(time)}</small>
+                        <small className="float-end mb-25 chat-time ms-25">{formatDate(time)}</small>
                         {item.unreadCount > 0 && (
                             <Badge className="float-end" color="danger" pill>
                                 {item.unreadCount}
                             </Badge>
                         )}
+                    </div>
+                </li>
+            );
+        });
+    };
+
+    // ** Render Filtered Contacts
+    const renderContacts = () => {
+        if (!filteredUsers || !filteredUsers.length) {
+            return (
+                <li className="no-results show">
+                    <h6 className="mb-0">No Contacts Found</h6>
+                </li>
+            );
+        }
+
+        return filteredUsers.map((user) => {
+            const avatarImg = user.avatar || userImg;
+            const name = user.username;
+
+            return (
+                <li
+                    key={user._id}
+                    onClick={() => handleUserClick(user)}
+                    className={classnames({ active: active === user._id })}
+                >
+                    <Avatar img={avatarImg} imgHeight="42" imgWidth="42" />
+                    <div className="chat-info flex-grow-1">
+                        <h5 className="mb-0">{name}</h5>
                     </div>
                 </li>
             );
@@ -127,14 +171,26 @@ const AdminMessageSidebarLeft = ({ chats, setSelectedContact, setSelectedUser })
                                     value={query}
                                     className="round"
                                     placeholder="Search or start a new chat"
-                                    onChange={handleFilter}
+                                    onKeyDown={(e) => {
+                                        if (e.key === "Enter") {
+                                            handleFilter({ target: { value: query } });
+                                        }
+                                    }}
+                                    onChange={(e) => setQuery(e.target.value)}
                                 />
                             </InputGroup>
                         </div>
                     </div>
+                    {filteredUsers && filteredUsers.length > 0 && (
+                        <div className="contact-user-list-wrapper">
+                            <h4 className="contact-list-title">Contacts</h4>
+                            <ul className="contact-users-list chat-list media-list">{renderContacts()}</ul>
+                        </div>
+                    )}
                     <PerfectScrollbar
                         className="chat-user-list-wrapper list-group"
-                        options={{ wheelPropagation: false }}>
+                        options={{ wheelPropagation: false }}
+                    >
                         <h4 className="chat-list-title">Chats</h4>
                         <ul className="chat-users-list chat-list media-list">{renderChats()}</ul>
                     </PerfectScrollbar>

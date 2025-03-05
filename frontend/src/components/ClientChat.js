@@ -1,4 +1,4 @@
-/* eslint-disable react/no-find-dom-node */
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
 import ReactDOM from 'react-dom';
 import classnames from 'classnames';
@@ -27,8 +27,9 @@ const ClientChat = (props) => {
 
     // ** Scroll to chat bottom
     const scrollToBottom = () => {
-        const chatContainer = ReactDOM.findDOMNode(chatArea.current);
-        chatContainer.scrollTop = Number.MAX_SAFE_INTEGER;
+        if (chatArea.current) {
+            chatArea.current.scrollTop = Number.MAX_SAFE_INTEGER;
+        }
     };
 
     useEffect(() => {
@@ -70,7 +71,7 @@ const ClientChat = (props) => {
                 room: selectedContact.contactId,
                 text: msg,
                 sender: user._id,
-                receiver: selectedUser?.provider._id,
+                receiver: selectedUser?.admin._id,
                 contact: selectedContact.contactId
             };
             socket.emit('chatMessage', message);
@@ -145,14 +146,14 @@ const ClientChat = (props) => {
     const ChatWrapper = messages && Object.keys(messages).length && messages.chats ? PerfectScrollbar : 'div';
     return (
         <div className="chat-app-window">
-            <div className={classnames('start-chat-area', { 'd-none': (messages && messages.chats && messages.chats.length > 0) || selectedUser.provider })}>
+            <div className={classnames('start-chat-area', { 'd-none': (messages && messages.chats && messages.chats.length > 0) || selectedUser.admin })}>
                 <div className="start-chat-icon mb-1">
                     <MessageSquare />
                 </div>
                 <h5 className="sidebar-toggle start-chat-text">Start Conversation</h5>
             </div>
             {selectedUser && Object.keys(selectedUser).length ? (
-                <div className={classnames('active-chat', { 'd-none': selectedUser.provider === null })}>
+                <div className={classnames('active-chat', { 'd-none': selectedUser.admin === null })}>
                     <div className="chat-navbar">
                         <div className="chat-header">
                             <div className="d-flex align-items-center">
@@ -162,18 +163,17 @@ const ClientChat = (props) => {
                                 <Avatar
                                     imgHeight="36"
                                     imgWidth="36"
-                                    img={selectedUser.provider?.avatar ? selectedUser.provider.avatar : userImg}
-                                    // status={selectedUser?.provider?.status}
+                                    img={selectedUser.admin?.avatar || userImg}
                                     className="avatar-border user-profile-toggle m-0 me-3"
                                 />
                                 <h6 className="mb-0">
-                                    {selectedUser.provider?.firstName} {selectedUser.provider?.lastName}
+                                    {selectedUser.admin?.username}
                                 </h6>
                             </div>
                         </div>
                     </div>
 
-                    <ChatWrapper ref={chatArea} className="user-chats" options={{ wheelPropagation: false }}>
+                    <ChatWrapper containerRef={(ref) => (chatArea.current = ref)} className="user-chats" options={{ wheelPropagation: false }}>
                         {messages && messages.chats ? <div className="chats">{renderChats()}</div> : null}
                     </ChatWrapper>
 
@@ -181,9 +181,8 @@ const ClientChat = (props) => {
                         <InputGroup className="input-group-merge me-3 form-send-message">
                             <Input value={msg} onChange={(e) => setMsg(e.target.value)} placeholder="Type your message or use speech to text" />
                         </InputGroup>
-                        <Button className="send" color="primary">
-                            <Send size={14} className="d-lg-none" />
-                            <span className="d-none d-lg-block">Send</span>
+                        <Button className="send" color="orange">
+                            <Send size={14} />
                         </Button>
                     </Form>
                 </div>

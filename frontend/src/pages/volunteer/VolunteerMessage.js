@@ -15,7 +15,7 @@ const VolunteerMessage = () => {
 
     useEffect(() => {
         refetch();
-    }, [messages]);
+    }, [messages, refetch]);
 
     return (
         <div className="container main-view">
