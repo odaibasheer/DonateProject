@@ -38,10 +38,8 @@ const AdminSchedule = () => {
     // Toggle modal
     const toggleModal = () => {
         setModal(!modal);
-        // if (!modal) {
-        //     reset();
-        //     setSelectedEvent(null);
-        // }
+        reset();
+        setSelectedEvent(null);
     };
 
     // Handle event click to view/edit event details
@@ -52,7 +50,7 @@ const AdminSchedule = () => {
         setValue('type', event.type);
         setValue('start', moment(event.start).format('YYYY-MM-DDTHH:mm'));
         setValue('end', moment(event.end).format('YYYY-MM-DDTHH:mm'));
-        toggleModal(); // Show modal
+        setModal(!modal);
     };
 
     // Add or update event handler

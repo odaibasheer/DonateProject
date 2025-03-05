@@ -36,6 +36,9 @@ import AdminRequests from './pages/admin/AdminRequest';
 import AdminRequestView from './pages/admin/AdminRequestView';
 import VolunteerTaskView from './pages/volunteer/VolunteerTaskView';
 import AdminMessage from './pages/admin/AdminMessage';
+import VolunteerMessage from './pages/volunteer/VolunteerMessage';
+import NeedyMessage from './pages/needy/NeedyMessage';
+import DonorMessage from './pages/donor/DonorMessage';
 
 const App = () => {
     const getHomeRoute = () => {
@@ -85,6 +88,11 @@ const App = () => {
                         <Route path="admin/requests" element={<AdminRequests />} />
                         <Route path="admin/requests/item-view/:id" element={<AdminRequestView />} />
                         <Route path="admin/message" element={<AdminMessage />} />
+                    </Route>
+                    <Route element={<RequiredUser allowedRoles={['Volunteer', 'Needy', 'Donor']} />}>
+                        <Route path="volunteer/message" element={<VolunteerMessage />} />
+                        <Route path="needy/message" element={<NeedyMessage />} />
+                        <Route path="donor/message" element={<DonorMessage />} />
                     </Route>
                     <Route path="admin/login" element={<AdminLogin />} />
                     <Route path="login" element={<Login />} />

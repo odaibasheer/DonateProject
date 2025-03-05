@@ -111,6 +111,11 @@ const Header = () => {
                                         Donation Items
                                     </NavLink>
                                 </NavItem>
+                                <NavItem className="nav-item-responsive">
+                                    <NavLink onClick={() => { navigate('/donor/message'); mobileToggle(); }}>
+                                        Message
+                                    </NavLink>
+                                </NavItem>
                                 <UncontrolledDropdown nav inNavbar>
                                     <DropdownToggle nav caret>
                                         <img src={userImg} alt="user" className="user-img" />
@@ -138,6 +143,11 @@ const Header = () => {
                                         My Items
                                     </NavLink>
                                 </NavItem>
+                                <NavItem className="nav-item-responsive">
+                                    <NavLink onClick={() => { navigate('/needy/message'); mobileToggle(); }}>
+                                        Message
+                                    </NavLink>
+                                </NavItem>
                                 <UncontrolledDropdown nav inNavbar>
                                     <DropdownToggle nav caret>
                                         <img src={userImg} alt="user" className="user-img" />
@@ -158,6 +168,11 @@ const Header = () => {
                                 <NavItem className="nav-item-responsive">
                                     <NavLink onClick={() => { navigate('/volunteer/profile'); mobileToggle(); }}>
                                         Profile
+                                    </NavLink>
+                                </NavItem>
+                                <NavItem className="nav-item-responsive">
+                                    <NavLink onClick={() => { navigate('/volunteer/message'); mobileToggle(); }}>
+                                        Message
                                     </NavLink>
                                 </NavItem>
                                 <UncontrolledDropdown nav inNavbar>
