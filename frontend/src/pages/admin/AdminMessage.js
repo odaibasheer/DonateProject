@@ -24,8 +24,6 @@ const AdminMessage = () => {
         refetchContact();
     }, [messages]);
 
-    console.log(contactUsers);
-
     return (
         <div className="container main-view">
             <div className="content-area-wrapper p-0">

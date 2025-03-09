@@ -26,6 +26,7 @@ const dashboardsRoute = require('./routes/dashboards');
 const tasksRoute = require('./routes/tasks');
 const inventoriesRoute = require('./routes/inventories');
 const contactsRoute = require('./routes/contacts');
+const reportRoute = require('./routes/report');
 const Message = require('./models/Message');
 
 // Init Middleware
@@ -58,6 +59,7 @@ app.use('/api/dashboards', dashboardsRoute);
 app.use('/api/tasks', tasksRoute);
 app.use('/api/inventories', inventoriesRoute);
 app.use('/api/contacts', contactsRoute);
+app.use('/api/report', reportRoute);
 
 const server = http.createServer(app);
 // Set up Socket.io with proper CORS handling

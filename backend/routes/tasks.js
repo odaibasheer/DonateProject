@@ -2,6 +2,7 @@ const express = require('express');
 const Task = require('../models/Task');
 const verifyToken = require('../utils/verifyToken');
 const Assistance = require('../models/Assistance');
+const Item = require('../models/Item');
 const router = express.Router();
 
 // Get all tasks with authorization
@@ -12,6 +13,12 @@ router.get('/', verifyToken(['Admin', 'Donor', 'Needy', 'Volunteer']), async (re
             .populate({
                 path: 'assign',
                 select: 'username email role',
+            })
+            .populate({
+                path: 'assistance',
+            })
+            .populate({
+                path: 'donation',
             });
 
         return res.status(200).send(tasks);
@@ -34,6 +41,9 @@ router.get('/volunteers', verifyToken(['Volunteer']), async (req, res) => {
             })
             .populate({
                 path: 'assistance',
+            })
+            .populate({
+                path: 'donation',
             });
 
         return res.status(200).send(tasks);
@@ -48,18 +58,46 @@ router.get('/volunteers', verifyToken(['Volunteer']), async (req, res) => {
 // Create a new task
 router.post('/create', verifyToken(['Admin', 'Volunteer']), async (req, res) => {
     try {
-        const { type, location, assign, status, urgency, assistance } = req.body;
+        const { title, type, location, assign, status, urgency, assistance, donation, quantity } = req.body;
 
+        // Fetch the donation item to check its quantity
+        const itemOne = await Item.findById(donation);
+        if (!itemOne) {
+            return res.status(404).send({
+                status: "error",
+                message: "Donation item not found.",
+            });
+        }
+
+        // Validate the requested quantity
+        if (quantity > itemOne.quantity) {
+            return res.status(400).send({
+                status: "error",
+                message: `Insufficient quantity available. Maximum available quantity is ${itemOne.quantity}.`,
+            });
+        }
+
+        // Create the new task
         const newTask = new Task({
+            title,
             type,
             location: location.formatted_address,
             assign,
             status,
             assistance,
+            donation,
             urgency,
+            quantity,
         });
 
         const savedTask = await newTask.save();
+
+        // Update the quantity of the donation item
+        const updatedData = { quantity: itemOne.quantity - quantity };
+        await Item.findByIdAndUpdate(donation, updatedData, {
+            new: true,
+            runValidators: true,
+        });
 
         return res.status(201).send({
             status: "success",
@@ -74,6 +112,7 @@ router.post('/create', verifyToken(['Admin', 'Volunteer']), async (req, res) => 
     }
 });
 
+
 // Get a single task by ID
 router.get('/getOneTask/:id', verifyToken(['Admin', 'Volunteer']), async (req, res) => {
     try {
@@ -87,6 +126,9 @@ router.get('/getOneTask/:id', verifyToken(['Admin', 'Volunteer']), async (req, r
             .populate({
                 path: 'assistance',
                 // select: 'type',
+            })
+            .populate({
+                path: 'donation',
             });
 
         if (!task) {
@@ -110,14 +152,27 @@ router.get('/getOneTask/:id', verifyToken(['Admin', 'Volunteer']), async (req, r
 router.put('/update/:id', verifyToken(['Volunteer', 'Admin']), async (req, res) => {
     try {
         const { id } = req.params;
-        const { type, location, assign, status, urgency, assistance } = req.body;
+        const { title, type, location, assign, status, urgency, assistance, donation, quantity } = req.body;
         const updatedData = {};
+
+        if (title) updatedData.title = title;
         if (type) updatedData.type = type;
-        if (location) updatedData.location = location;
+        
+        // Check if location is an object or string
+        if (location) {
+            if (typeof location === 'object' && location.formatted_address) {
+                updatedData.location = location.formatted_address; // If it's an object, use the formatted_address
+            } else if (typeof location === 'string') {
+                updatedData.location = location; // If it's a string, just assign it
+            }
+        }
+
         if (assign) updatedData.assign = assign;
         if (assistance) updatedData.assistance = assistance;
+        if (donation) updatedData.donation = donation;
         if (status) updatedData.status = status;
         if (urgency) updatedData.urgency = urgency;
+        if (quantity) updatedData.quantity = quantity;
 
         const updatedTask = await Task.findByIdAndUpdate(id, updatedData, {
             new: true,
@@ -143,6 +198,7 @@ router.put('/update/:id', verifyToken(['Volunteer', 'Admin']), async (req, res) 
         });
     }
 });
+
 
 // Delete a task by ID
 router.delete('/delete/:id', verifyToken(['Admin']), async (req, res) => {
@@ -184,5 +240,20 @@ router.get("/getAssistances", verifyToken(["Admin", "Donor", "Needy", "Volunteer
         return res.status(500).send({ status: "error", message: error.message });
     }
 });
+
+router.get("/getEnableItems", verifyToken(["Admin", "Donor", "Needy", "Volunteer"]), async (req, res) => {
+    try {
+        const items = await Item.find({ quantity: { $gt: 0 } })
+            .select('-__v')
+            .populate({
+                path: 'createdBy',
+                select: 'username email role'
+            });
+        return res.status(200).send(items);
+    } catch (error) {
+        return res.status(500).send({ status: "error", message: error.message });
+    }
+});
+
 
 module.exports = router;

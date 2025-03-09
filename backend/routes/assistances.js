@@ -13,10 +13,12 @@ const upload = multer({
         },
     }),
     fileFilter: (req, file, cb) => {
-        if (file.mimetype.startsWith("image/") || file.mimetype === "application/pdf") {
+        const allowedMimeTypes = ["image/", "application/pdf", "application/vnd.ms-excel", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"];
+        
+        if (allowedMimeTypes.some(mime => file.mimetype.startsWith(mime))) {
             cb(null, true);
         } else {
-            cb(new Error("Only image or PDF files are allowed!"));
+            cb(new Error("Only image, PDF, or Excel files are allowed!"));
         }
     },
 });
@@ -74,7 +76,7 @@ router.get("/my-items", verifyToken(["Admin", "Donor", "Needy"]), async (req, re
 // **POST /assistances/create** - Submit a new assistance request
 router.post("/create", verifyToken(["Needy", "Donor"]), upload.single("supporting_document"), async (req, res) => {
     try {
-        const { type, description } = req.body;
+        const { title, type, description } = req.body;
         const createdBy = req.user._id;
         let supportingDocument = null;
 
@@ -83,6 +85,7 @@ router.post("/create", verifyToken(["Needy", "Donor"]), upload.single("supportin
         }
 
         const newAssistance = new Assistance({
+            title,
             type,
             description,
             createdBy,
@@ -104,9 +107,10 @@ router.post("/create", verifyToken(["Needy", "Donor"]), upload.single("supportin
 router.put("/update/:id", verifyToken(["Needy", "Admin"]), upload.single("supporting_document"), async (req, res) => {
     try {
         const { id } = req.params;
-        const { type, description } = req.body;
+        const { title, type, description } = req.body;
 
         const updatedData = {};
+        if (title) updatedData.title = title;
         if (type) updatedData.type = type;
         if (description) updatedData.description = description;
 

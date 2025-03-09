@@ -79,6 +79,11 @@ const NeedyAssistanceItems = () => {
             cell: (row) => renderDocument(row.supporting_document),
         },
         {
+            name: "Title",
+            selector: (row) => row.title,
+            sortable: true,
+        },
+        {
             name: "Type",
             selector: (row) => row.type,
             sortable: true,

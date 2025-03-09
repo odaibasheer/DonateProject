@@ -110,7 +110,7 @@ const AdminChat = (props) => {
         return formattedChatData().map((item, index) => (
             <div
                 key={index}
-                className={classnames('chat', { 'chat-left': item.senderId !== user._id })}
+                className={classnames('chat', { 'chat-left': item.senderId !== user?._id })}
             >
                 <div className="chat-avatar">
                     <Avatar

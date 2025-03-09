@@ -8,7 +8,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { toast } from 'react-toastify';
 import Autocomplete from 'react-google-autocomplete';
 import { useGetUsersQuery } from "../../redux/api/userAPI";
-import { useUpdateTaskMutation, useGetTaskQuery, useGetTaskAssistancesQuery } from "../../redux/api/taskAPI";
+import { useUpdateTaskMutation, useGetTaskQuery, useGetTaskAssistancesQuery, useGetTaskEnableItemsQuery } from "../../redux/api/taskAPI";
 
 const AdminShippingUpdate = () => {
     const navigate = useNavigate();
@@ -25,33 +25,37 @@ const AdminShippingUpdate = () => {
     const [locationObj, setLocationObj] = useState(null);
 
     // Fetch task details by ID
-    const { data: task, isLoading: isLoadingTask } = useGetTaskQuery(id);
-
+    const { data: task, refetch, isLoading: isLoadingTask } = useGetTaskQuery(id);
 
     // Fetch volunteers
     const queryParams = { role: "Volunteer" };
-    const { data: volunteers, refetch, isLoading: isLoadingVolunteer } = useGetUsersQuery(queryParams);
-    const { data: assistances, refetch: refetchAssistance, isLoading: isLoadingAssistance } = useGetTaskAssistancesQuery();
+    const { data: volunteers, isLoading: isLoadingVolunteer } = useGetUsersQuery(queryParams);
+
+    // Fetch assistances
+    const { data: assistances, refetch: refetchAssistance } = useGetTaskAssistancesQuery();
+    const { data: donations, refetch: refetchDonation } = useGetTaskEnableItemsQuery();
 
     useEffect(() => {
         refetch();
+        refetchDonation();
         refetchAssistance();
-    }, [refetch, refetchAssistance]);
+    }, [refetch, refetchDonation, refetchAssistance]);
 
     // Update task mutation
     const [updateTask, { isLoading, isError, error, isSuccess }] = useUpdateTaskMutation();
 
     useEffect(() => {
-        // Prefill form with task data
         if (task) {
-            console.log(task)
+            setValue("title", task.title);
             setValue("type", task.type);
             setValue("assign", task.assign?._id || "");
             setValue("assistance", task.assistance?._id || "");
             setValue("urgency", task.urgency);
+            setValue("donation", task.donation?._id || "");
+            setValue("quantity", task.quantity || 0);
             setLocationObj(task.location);
         }
-    }, [task]);
+    }, [task, assistances]);
 
     const onSubmit = (data) => {
         if (!locationObj) {
@@ -90,6 +94,19 @@ const AdminShippingUpdate = () => {
                             ) : (
                                 <Form onSubmit={handleSubmit(onSubmit)}>
                                     <Row>
+                                        <Col md="6">
+                                            <div className="mb-2">
+                                                <Label>Title</Label>
+                                                <input
+                                                    className={`form-control ${classnames({ 'is-invalid': errors.title })}`}
+                                                    type="text"
+                                                    {...register('title', { required: true })}
+                                                />
+                                                {errors.title && (
+                                                    <small className="text-danger">Title is required.</small>
+                                                )}
+                                            </div>
+                                        </Col>
                                         <Col md={6}>
                                             <div className="mb-2">
                                                 <Label>Task Type</Label>
@@ -147,19 +164,20 @@ const AdminShippingUpdate = () => {
                                                 )}
                                             </div>
                                         </Col>
-
                                         <Col md={6}>
                                             <div className="mb-2">
                                                 <Label>Assign Assistance</Label>
                                                 <select
-                                                    className={`form-control ${classnames({ 'is-invalid': errors.assign })}`}
-                                                    {...register('assistance', { required: 'Assign Assistance is required.' })}
-                                                    disabled={isLoadingAssistance}
+                                                    className={`form-control ${classnames({ 'is-invalid': errors.assistance })}`}
+                                                    {...register('assistance', {
+                                                        required: 'Assign Assistance is required.',
+                                                    })}
+                                                    disabled
                                                 >
                                                     <option value="">Select Assistance</option>
                                                     {assistances?.map((assistance) => (
                                                         <option key={assistance._id} value={assistance._id}>
-                                                            {assistance.type}
+                                                            {assistance.title}
                                                         </option>
                                                     ))}
                                                 </select>
@@ -168,21 +186,41 @@ const AdminShippingUpdate = () => {
                                                 )}
                                             </div>
                                         </Col>
-
                                         <Col md={6}>
                                             <div className="mb-2">
-                                                <Label>Urgency</Label>
+                                                <Label>Assign Donation</Label>
                                                 <select
-                                                    className={`form-control ${classnames({ 'is-invalid': errors.urgency })}`}
-                                                    {...register('urgency', { required: 'Urgency is required.' })}
+                                                    className={`form-control ${classnames({ 'is-invalid': errors.donation })}`}
+                                                    {...register('donation', {
+                                                        required: 'Assign Donation is required.',
+                                                    })}
+                                                    disabled
                                                 >
-                                                    <option value="">Select Urgency</option>
-                                                    <option value="Low">Low</option>
-                                                    <option value="Medium">Medium</option>
-                                                    <option value="High">High</option>
+                                                    <option value="">Select Donation</option>
+                                                    {donations.map((donation) => (
+                                                        <option key={donation._id} value={donation._id}>
+                                                            {`${donation.title} - Quantity(${donation.quantity})`}
+                                                        </option>
+                                                    ))}
                                                 </select>
-                                                {errors.urgency && (
-                                                    <small className="text-danger">{errors.urgency.message}</small>
+                                                {errors.donation && (
+                                                    <small className="text-danger">{errors.donation.message}</small>
+                                                )}
+                                            </div>
+                                        </Col>
+                                        <Col md={6}>
+                                            <div className="mb-2">
+                                                <Label>Quantity</Label>
+                                                <input
+                                                    className={`form-control ${classnames({ 'is-invalid': errors.quantity })}`}
+                                                    type="number"
+                                                    {...register('quantity', {
+                                                        required: 'Quantity is required.',
+                                                    })}
+                                                    disabled
+                                                />
+                                                {errors.quantity && (
+                                                    <small className="text-danger">{errors.quantity.message}</small>
                                                 )}
                                             </div>
                                         </Col>

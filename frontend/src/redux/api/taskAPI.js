@@ -103,6 +103,13 @@ export const taskAPI = createApi({
             }),
         }),
 
+        getTaskEnableItems: builder.query({
+            query: () => ({
+                url: '/tasks/getEnableItems',
+                credentials: 'include',
+            }),
+        }),
+
         // Delete Task
         deleteTask: builder.mutation({
             query(id) {
@@ -126,4 +133,5 @@ export const {
     useGetTaskAssistancesQuery,
     useUpdateTaskStatusMutation,
     useGetVolunteerTasksQuery,
+    useGetTaskEnableItemsQuery,
 } = taskAPI;

@@ -39,6 +39,11 @@ const VolunteerTasks = () => {
 
     const columns = [
         {
+            name: 'Title',
+            selector: (row) => row.title,
+            sortable: true,
+        },
+        {
             name: 'Type',
             selector: (row) => row.type,
             sortable: true,
@@ -46,6 +51,16 @@ const VolunteerTasks = () => {
         {
             name: 'Location',
             selector: (row) => row.location,
+            sortable: true,
+        },
+        {
+            name: 'Donation',
+            selector: (row) => row.donation?.title,
+            sortable: true,
+        },
+        {
+            name: 'Assistance',
+            selector: (row) => row.assistance?.title,
             sortable: true,
         },
         {

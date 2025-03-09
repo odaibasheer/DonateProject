@@ -2,7 +2,7 @@
 import { useForm } from "react-hook-form";
 import { Button, Card, CardBody, Col, Form, FormGroup, Label, Row } from "reactstrap";
 import classnames from "classnames";
-import { useGetAssistanceQuery, useUpdateAssistanceMutation } from "../../redux/api/assistanceAPI"; // Adjusted import for assistance API
+import { useGetAssistanceQuery, useUpdateAssistanceMutation } from "../../redux/api/assistanceAPI";
 import { toast } from "react-toastify";
 import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -10,7 +10,7 @@ import FullScreenLoader from "../../components/FullScreenLoader";
 
 const NeedyAssistanceItemUpdate = () => {
     const navigate = useNavigate();
-    const { id } = useParams(); // Get the assistance item ID from the URL
+    const { id } = useParams();
 
     // Fetch existing assistance item by ID
     const { data: assistanceItem, isError, error, isLoading } = useGetAssistanceQuery(id);
@@ -27,6 +27,7 @@ const NeedyAssistanceItemUpdate = () => {
     useEffect(() => {
         if (assistanceItem) {
             // Set form values when data is fetched
+            setValue("title", assistanceItem.title);
             setValue("type", assistanceItem.type);
             setValue("status", assistanceItem.status);
             setValue("description", assistanceItem.description);
@@ -40,6 +41,7 @@ const NeedyAssistanceItemUpdate = () => {
     const onSubmit = async (formData) => {
         try {
             const dataToSubmit = new FormData();
+            dataToSubmit.append("title", formData.title);
             dataToSubmit.append("type", formData.type);
             dataToSubmit.append("description", formData.description);
             formData.supporting_document && dataToSubmit.append("supporting_document", formData.supporting_document[0]);
@@ -76,13 +78,26 @@ const NeedyAssistanceItemUpdate = () => {
         <div className="container main-view">
             <Row className="my-3">
                 <Col>
-                    <h3 className="mb-3">Update Needy Assistance Item</h3>
+                    <h3 className="mb-3">Update Request Item</h3>
                 </Col>
             </Row>
             <Card>
                 <CardBody>
                     <Form onSubmit={handleSubmit(onSubmit)}>
                         <Row>
+                            <Col md="6">
+                                <div className="mb-2">
+                                    <Label>Title</Label>
+                                    <input
+                                        className={`form-control ${classnames({ 'is-invalid': errors.title })}`}
+                                        type="text"
+                                        {...register('title', { required: true })}
+                                    />
+                                    {errors.title && (
+                                        <small className="text-danger">Title is required.</small>
+                                    )}
+                                </div>
+                            </Col>
                             <Col md={6}>
                                 <FormGroup>
                                     <Label for="type">Assistance Type</Label>
@@ -108,8 +123,8 @@ const NeedyAssistanceItemUpdate = () => {
                                     )}
                                 </FormGroup>
                             </Col>
-                            
-                        
+
+
                             <Col md={6}>
                                 <FormGroup>
                                     <Label for="supporting_document">Supporting Document</Label>
@@ -153,7 +168,7 @@ const NeedyAssistanceItemUpdate = () => {
                                 </FormGroup>
                             </Col>
                         </Row>
-                        
+
                         <Row className="mt-4">
                             <Col>
                                 <Button
@@ -161,7 +176,7 @@ const NeedyAssistanceItemUpdate = () => {
                                     color="primary"
                                     disabled={isUpdating}
                                 >
-                                    {isUpdating ? "Updating..." : "Update Assistance Item"}
+                                    {isUpdating ? "Updating..." : "Update Request"}
                                 </Button>
                             </Col>
                         </Row>

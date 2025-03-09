@@ -21,6 +21,7 @@ const NeedyAssistanceItemCreate = () => {
         try {
             const dataToSubmit = new FormData();
 
+            dataToSubmit.append("title", formData.title);
             dataToSubmit.append("type", formData.type);
             dataToSubmit.append("description", formData.description);
             formData.supporting_document && dataToSubmit.append("supporting_document", formData.supporting_document[0]);
@@ -40,7 +41,7 @@ const NeedyAssistanceItemCreate = () => {
         if (isError) {
             const errorData = error?.data?.error;
             if (Array.isArray(errorData)) {
-                errorData.forEach((el) => 
+                errorData.forEach((el) =>
                     toast.error(el.message, { position: "top-right" })
                 );
             } else {
@@ -55,13 +56,26 @@ const NeedyAssistanceItemCreate = () => {
         <div className="container main-view">
             <Row className="my-3">
                 <Col>
-                    <h3 className="mb-3">Create Needy Assistance Item</h3>
+                    <h3 className="mb-3">Create Request Item</h3>
                 </Col>
             </Row>
             <Card>
                 <CardBody>
                     <Form onSubmit={handleSubmit(onSubmit)}>
                         <Row>
+                            <Col md="6">
+                                <div className="mb-2">
+                                    <Label>Title</Label>
+                                    <input
+                                        className={`form-control ${classnames({ 'is-invalid': errors.title })}`}
+                                        type="text"
+                                        {...register('title', { required: true })}
+                                    />
+                                    {errors.title && (
+                                        <small className="text-danger">Title is required.</small>
+                                    )}
+                                </div>
+                            </Col>
                             <Col md={6}>
                                 <FormGroup>
                                     <Label for="type">Assistance Type</Label>
@@ -87,7 +101,7 @@ const NeedyAssistanceItemCreate = () => {
                                     )}
                                 </FormGroup>
                             </Col>
-                            
+
                             <Col md={6}>
                                 <FormGroup>
                                     <Label for="supporting_document">Supporting Document</Label>
@@ -131,7 +145,7 @@ const NeedyAssistanceItemCreate = () => {
                                 </FormGroup>
                             </Col>
                         </Row>
-                        
+
                         <Row className="mt-4">
                             <Col>
                                 <Button
@@ -139,7 +153,7 @@ const NeedyAssistanceItemCreate = () => {
                                     color="primary"
                                     disabled={isLoading}
                                 >
-                                    {isLoading ? "Submitting..." : "Create Assistance Item"}
+                                    {isLoading ? "Submitting..." : "Create Request"}
                                 </Button>
                             </Col>
                         </Row>

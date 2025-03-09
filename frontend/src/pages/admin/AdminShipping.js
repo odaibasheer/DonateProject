@@ -68,6 +68,11 @@ const AdminShipping = () => {
 
     const columns = [
         {
+            name: 'Title',
+            selector: (row) => row.title,
+            sortable: true,
+        },
+        {
             name: 'Type',
             selector: (row) => row.type,
             sortable: true,
@@ -80,6 +85,16 @@ const AdminShipping = () => {
         {
             name: 'Assigned User',
             selector: (row) => row.assign?.username,
+            sortable: true,
+        },
+        {
+            name: 'Donation',
+            selector: (row) => row.donation?.title,
+            sortable: true,
+        },
+        {
+            name: 'Assistance',
+            selector: (row) => row.assistance?.title,
             sortable: true,
         },
         {

@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
 const assistanceSchema = new mongoose.Schema({
+    title: { type: String, required: true },
     type: { type: String, enum: ['Money', 'Clothes', 'Food', 'Medical Supplies', 'Furniture', 'Financial Support', 'Legal Aid', 'Other'], default: 'Money' },
     description: { type: String, required: true },
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },

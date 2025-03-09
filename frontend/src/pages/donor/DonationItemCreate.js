@@ -20,6 +20,7 @@ const DonationItemCreate = () => {
     const onSubmit = async (data) => {
         try {
             const form = new FormData();
+            form.append("title", data.title);
             form.append("type", data.type);
             form.append("quantity", data.quantity);
             form.append("description", data.description);
@@ -65,6 +66,19 @@ const DonationItemCreate = () => {
                 <CardBody>
                     <Form onSubmit={handleSubmit(onSubmit)}>
                         <Row>
+                            <Col md="6">
+                                <div className="mb-2">
+                                    <Label>Title</Label>
+                                    <input
+                                        className={`form-control ${classnames({ 'is-invalid': errors.title })}`}
+                                        type="text"
+                                        {...register('title', { required: true })}
+                                    />
+                                    {errors.title && (
+                                        <small className="text-danger">Title is required.</small>
+                                    )}
+                                </div>
+                            </Col>
                             <Col md={6}>
                                 <FormGroup>
                                     <Label for="type">Donation Type</Label>

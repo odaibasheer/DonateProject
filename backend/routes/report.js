@@ -2,57 +2,56 @@ const express = require('express');
 const verifyToken = require('../utils/verifyToken');
 const Item = require('../models/Item');
 const Assistance = require('../models/Assistance');
+const Task = require('../models/Task');
 const router = express.Router();
 
+// Admin Route: Fetch Transparency & Reporting Data
 router.get('/admin', verifyToken(['Admin']), async (req, res) => {
     try {
-        const totalDonation = await Item.countDocuments();
-        const pendingCount = await Assistance.countDocuments({ status: 'Pending' });
-        const approvedCount = await Assistance.countDocuments({ status: 'Approved' });
-        const declinedCount = await Assistance.countDocuments({ status: 'Declined' });
+        const totalReceivedDonations = await Item.countDocuments();
+        const totalDistributedDonations = await Task.countDocuments({ status: 'Delivered' });
 
-        // Get daily requests
-        const dailyRequests = await Assistance.aggregate([
-            {
-                $group: {
-                    _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } },
-                    count: { $sum: 1 },
-                },
-            },
-            { $sort: { _id: 1 } }, // Sort by date
+        const donationsByType = await Item.aggregate([
+            { $group: { _id: '$type', totalDonations: { $sum: 1 } } }
         ]);
 
-        // Get monthly requests
-        const monthlyRequests = await Assistance.aggregate([
-            {
-                $group: {
-                    _id: { $dateToString: { format: '%Y-%m', date: '$createdAt' } },
-                    count: { $sum: 1 },
-                },
-            },
-            { $sort: { _id: 1 } }, // Sort by month
+        const assistanceByStatus = await Assistance.aggregate([
+            { $group: { _id: '$status', totalAssistances: { $sum: 1 } } }
         ]);
 
-        // Transform data for the frontend
-        const dailyRequestsFormatted = dailyRequests.map((item) => ({
-            date: item._id,
-            count: item.count,
+        const volunteerTaskStats = await Task.aggregate([
+            {
+                $group: {
+                    _id: '$status',
+                    totalVolunteerTasks: { $sum: 1 },
+                },
+            },
+        ]);
+
+        const formattedDonationsByType = donationsByType.map((item) => ({
+            type: item._id,
+            totalDonations: item.totalDonations,
         }));
 
-        const monthlyRequestsFormatted = monthlyRequests.map((item) => ({
-            month: item._id,
-            count: item.count,
+        const formattedAssistanceByStatus = assistanceByStatus.map((item) => ({
+            status: item._id,
+            totalAssistances: item.totalAssistances,
+        }));
+
+        const formattedVolunteerTaskStats = volunteerTaskStats.map((item) => ({
+            status: item._id,
+            totalVolunteerTasks: item.totalVolunteerTasks,
         }));
 
         return res.send({
-            pending: pendingCount,
-            approved: approvedCount,
-            declined: declinedCount,
-            dailyRequests: dailyRequestsFormatted,
-            monthlyRequests: monthlyRequestsFormatted,
+            totalReceivedDonations,
+            totalDistributedDonations,
+            donationsByType: formattedDonationsByType,
+            assistanceByStatus: formattedAssistanceByStatus,
+            volunteerTaskStats: formattedVolunteerTaskStats,
         });
     } catch (error) {
-        console.error('Error fetching assistance statistics:', error);
+        console.error('Error fetching statistics:', error);
         return res.status(500).send({ message: 'Internal Server Error' });
     }
 });

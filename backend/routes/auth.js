@@ -117,7 +117,7 @@ router.post('/login', async (req, res) => {
         const refreshToken = jwt.sign(
             { _id: user._id, role: user.role },
             process.env.REFRESH_TOKEN_SECRET,
-            { expiresIn: authConfig.refreshTokenExpireTime || '7d' }
+            { expiresIn: authConfig.refreshTokenExpireTime || '30d' }
         );
 
         // Store the refresh token securely

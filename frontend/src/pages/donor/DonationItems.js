@@ -51,6 +51,12 @@ const DonationItems = () => {
             cell: (row) => renderImage(row.image),
         },
         {
+            name: "Title",
+            width: "100px",
+            selector: (row) => row.title,
+            sortable: true,
+        },
+        {
             name: "Donation Type",
             width: "100px",
             selector: (row) => row.type,

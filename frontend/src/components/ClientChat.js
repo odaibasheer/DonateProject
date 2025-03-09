@@ -124,7 +124,7 @@ const ClientChat = (props) => {
                 <div
                     key={index}
                     className={classnames('chat', {
-                        'chat-left': item.senderId !== user._id
+                        'chat-left': item.senderId !== user?._id
                     })}>
                     <div className="chat-avatar">
                         <Avatar imgWidth={36} imgHeight={36} className="box-shadow-1 cursor-pointer" img={item.senderAvatar} />

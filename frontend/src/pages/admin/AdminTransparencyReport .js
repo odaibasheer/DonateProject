@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Container, Row, Col, Card, CardBody, CardTitle, Table, Button } from 'reactstrap';
 import { Bar, Pie } from 'react-chartjs-2';
+import { useGetAdminReportQuery } from '../../redux/api/reportAPI';
+import FullScreenLoader from '../../components/FullScreenLoader';
 import {
     Chart as ChartJS,
     ArcElement,
@@ -15,44 +17,50 @@ import {
 ChartJS.register(ArcElement, BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
 const AdminTransparencyReport = () => {
+    const { data: report, refetch, isLoading } = useGetAdminReportQuery();
+
+    useEffect(() => {
+        refetch();
+    }, [refetch]);
+
+    if (isLoading) {
+        return <FullScreenLoader />;
+    }
+
     // Data for Homepage Stats (Public)
-    const totalDonations = 5000; // Example total
-    const totalDistributed = 4500; // Example total
-    const completedDistributions = [
-        { id: 1, image: 'image1.jpg', summary: 'Distribution to 100 families in City A' },
-        { id: 2, image: 'image2.jpg', summary: 'School supplies to 200 students in City B' },
-    ];
+    const totalDonations = report ? report.totalReceivedDonations : 0;
+    const totalDistributed = report ? report.totalDistributedDonations : 0;
 
     // Data for Admin Reports
     const donationsData = {
-        labels: ['Food', 'Clothes', 'Money', 'Books'],
+        labels: report.donationsByType.map(item => item.type),
         datasets: [
             {
                 label: 'Donations by Type',
                 backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0'],
-                data: [1200, 1500, 1800, 700], // Example data
+                data: report.donationsByType.map(item => item.totalDonations),
             },
         ],
     };
 
     const requestsData = {
-        labels: ['Resolved', 'Pending', 'Rejected'],
+        labels: report.assistanceByStatus.map(item => item.status),
         datasets: [
             {
                 label: 'Assistance Requests',
                 backgroundColor: ['#28a745', '#ffc107', '#dc3545'],
-                data: [40, 15, 5], // Example data
+                data: report.assistanceByStatus.map(item => item.totalAssistances),
             },
         ],
     };
 
     const volunteerData = {
-        labels: ['Completed', 'In Progress', 'Not Started'],
+        labels: report.volunteerTaskStats.map(item => item.status),
         datasets: [
             {
-                label: 'Volunteer Task Completion',
+                label: "Total count",
                 backgroundColor: ['#007bff', '#ffc107', '#dc3545'],
-                data: [60, 20, 10], // Example data
+                data: report.volunteerTaskStats.map(item => item.totalVolunteerTasks)
             },
         ],
     };
@@ -77,24 +85,6 @@ const AdminTransparencyReport = () => {
                             </Row>
                         </CardBody>
                     </Card>
-                    <h5>Completed Distributions:</h5>
-                    <Row>
-                        {completedDistributions.map((dist) => (
-                            <Col md="6" key={dist.id}>
-                                <Card className="mb-3">
-                                    <img
-                                        src={dist.image}
-                                        alt="Distribution"
-                                        className="card-img-top"
-                                        style={{ height: '200px', objectFit: 'cover' }}
-                                    />
-                                    <CardBody>
-                                        <p>{dist.summary}</p>
-                                    </CardBody>
-                                </Card>
-                            </Col>
-                        ))}
-                    </Row>
                 </Col>
             </Row>
 
@@ -108,8 +98,7 @@ const AdminTransparencyReport = () => {
                                     <CardTitle tag="h5" className="text-center">
                                         Donations by Type
                                     </CardTitle>
-                                    <Pie data={donationsData}
-                                        style={{ height: '300px', width: '300px', margin: '0 auto' }} />
+                                    <Pie data={donationsData} style={{ height: '300px', width: '300px', margin: '0 auto' }} />
                                 </CardBody>
                             </Card>
                         </Col>
@@ -119,8 +108,7 @@ const AdminTransparencyReport = () => {
                                     <CardTitle tag="h5" className="text-center">
                                         Assistance Requests Status
                                     </CardTitle>
-                                    <Pie data={requestsData}
-                                        style={{ height: '300px', width: '300px', margin: '0 auto' }} />
+                                    <Pie data={requestsData} style={{ height: '300px', width: '300px', margin: '0 auto' }} />
                                 </CardBody>
                             </Card>
                         </Col>
@@ -137,54 +125,6 @@ const AdminTransparencyReport = () => {
                             </Card>
                         </Col>
                     </Row>
-                </Col>
-            </Row>
-
-            <Row className="mt-5">
-                <Col>
-                    <h4>Admin Reports (Detailed)</h4>
-                    <Table bordered>
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Report Type</th>
-                                <th>Details</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>1</td>
-                                <td>Donations Report</td>
-                                <td>Details of donations by type, status, and purpose</td>
-                                <td>
-                                    <Button color="primary" size="sm">
-                                        Download
-                                    </Button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td>Assistance Requests</td>
-                                <td>Resolution statuses of assistance requests</td>
-                                <td>
-                                    <Button color="primary" size="sm">
-                                        Download
-                                    </Button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>3</td>
-                                <td>Volunteer Tasks</td>
-                                <td>Statistics of volunteer task completion</td>
-                                <td>
-                                    <Button color="primary" size="sm">
-                                        Download
-                                    </Button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </Table>
                 </Col>
             </Row>
         </Container>
